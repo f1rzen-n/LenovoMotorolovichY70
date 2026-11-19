@@ -15,6 +15,7 @@ ResolutionMasterApp/ResolutionMaster_*.apk
 /usb_driver/
 
 # Temporary & build test folders
+/4pda_release/
 /nfc_build/
 /nfc_build_test/
 /nfc_v13_extracted/
