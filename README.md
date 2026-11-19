@@ -5,6 +5,7 @@
 <h1 align="center">LenovoMotorolovichY70</h1>
 
 <p align="center">
+  <a href="https://github.com/f1rzen-n"><img src="https://img.shields.io/badge/Author-nik.reneyj%20(@f1rzen--n)-blueviolet.svg" alt="Author"></a>
   <a href="#"><img src="https://img.shields.io/badge/Platform-Android%2012%2B-green.svg" alt="Platform"></a>
   <a href="#"><img src="https://img.shields.io/badge/Device-Lenovo%20Legion%20Y70%20%7C%20Moto%20Edge%2070%20Max-blue.svg" alt="Device"></a>
   <a href="#"><img src="https://img.shields.io/badge/SoC-Snapdragon%208%2B%20Gen%201-orange.svg" alt="SoC"></a>
@@ -67,7 +68,7 @@
 
 ## Ссылки на 4PDA
 * **Основная тема устройства:** [Lenovo Legion Y70 — Прошивки на 4PDA](https://4pda.to/forum/index.php?showtopic=1121132)
-* **Пост автора приложения:** [nik.reneyj (Пост #145909028)](https://4pda.to/forum/index.php?showtopic=1121132&view=findpost&p=145909028)
+* **Пост автора и разработчика приложения:** [nik.reneyj (Пост #145909028)](https://4pda.to/forum/index.php?showtopic=1121132&view=findpost&p=145909028)
 * **Пост автора алгоритма фикса NFC:** [stepchansky (Пост #146040708)](https://4pda.to/forum/index.php?showtopic=1121132&view=findpost&p=146040708)
 
 ---
@@ -90,10 +91,17 @@ python build_apk.py
 
 ---
 
+## Автор
+* **Разработчик:** **nik.reneyj** ([GitHub: @f1rzen-n](https://github.com/f1rzen-n) | [4PDA: nik.reneyj](https://4pda.to/forum/index.php?showtopic=1121132&view=findpost&p=145909028))
+
+---
+
 ## Лицензия и отказ от ответственности
 
 ### Условия использования (MIT License)
-Исходный код приложения распространяется под свободной лицензией **MIT**. Разрешается свободное использование, модификация, распространение и создание форков как для личных, так и для открытых проектов при условии сохранения упоминания оригинальных авторов и ссылки на репозиторий.
+**Copyright (c) 2026 nik.reneyj ([@f1rzen-n](https://github.com/f1rzen-n))**
+
+Исходный код приложения распространяется под свободной лицензией **MIT**. Разрешается свободное использование, изучение, модификация, распространение и создание форков как для личных, так и для открытых проектов при обязательном сохранении упоминания оригинального автора (**nik.reneyj**) и ссылки на репозиторий.
 
 ### Сторонние компоненты и благодарности
 * **[Shizuku API](https://github.com/RikkaApps/Shizuku-API) & AIDL:** библиотеки межпроцессного взаимодействия с системным сервером [Shizuku](https://github.com/RikkaApps/Shizuku) (разработчик [Rikka / RikkaApps](https://github.com/RikkaApps)) распространяются по лицензии [Apache 2.0](https://www.apache.org/licenses/LICENSE-2.0).
