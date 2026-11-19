@@ -1,0 +1,33 @@
+# Android build outputs & binaries
+*.apk
+*.zip
+*.tar.gz
+*.class
+*.dex
+!ResolutionMasterApp/assets/*.dex
+ResolutionMasterApp/bin/
+ResolutionMasterApp/compiled_res.zip
+ResolutionMasterApp/ResolutionMaster_*.apk
+
+# Android SDK & Toolchain binaries (large 3rd party tools)
+/build-tools/
+/platform-tools/
+/usb_driver/
+
+# Temporary & build test folders
+/nfc_build/
+/nfc_build_test/
+/nfc_v13_extracted/
+/GCam_LegionY70/
+CQATest.apk
+
+# Python cache
+__pycache__/
+*.pyc
+
+# OS & Editor files
+.DS_Store
+Thumbs.db
+*.swp
+.idea/
+.vscode/
