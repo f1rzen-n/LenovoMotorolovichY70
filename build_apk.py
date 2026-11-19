@@ -55,14 +55,14 @@ src_dir = os.path.join(app_dir, 'src')
 
 # Step 1: aapt2 compile
 print("1. Compiling resources with aapt2...")
-res = subprocess.run([aapt2, 'compile', '--dir', res_dir, '-o', compiled_res], capture_output=True, text=True, encoding='utf-8')
+res = subprocess.run([aapt2, 'compile', '--dir', res_dir, '-o', compiled_res], capture_output=True, text=True, encoding='utf-8', errors='replace')
 print("aapt2 compile:", res.stdout, res.stderr)
 if res.returncode != 0:
     exit(1)
 
 # Step 2: aapt2 link
 print("2. Linking resources and generating R.java...")
-res = subprocess.run([aapt2, 'link', '-I', android_jar, '--manifest', manifest, '-o', unaligned_apk, '--java', src_dir, compiled_res, '--auto-add-overlay'], capture_output=True, text=True, encoding='utf-8')
+res = subprocess.run([aapt2, 'link', '-I', android_jar, '--manifest', manifest, '-o', unaligned_apk, '--java', src_dir, compiled_res, '--auto-add-overlay'], capture_output=True, text=True, encoding='utf-8', errors='replace')
 print("aapt2 link:", res.stdout, res.stderr)
 if res.returncode != 0:
     exit(1)
@@ -76,7 +76,7 @@ javac_cp = f"{android_jar};{';'.join(shizuku_jars)}"
 print("3. Compiling Java sources with javac (UTF-8)...")
 java_pkg_dir = os.path.join(src_dir, 'com', 'moto', 'resolutionmaster')
 java_files = [os.path.join(java_pkg_dir, f) for f in os.listdir(java_pkg_dir) if f.endswith('.java')]
-res = subprocess.run([javac, '-encoding', 'UTF-8', '-cp', javac_cp, '-d', bin_dir] + java_files, capture_output=True, text=True, encoding='utf-8')
+res = subprocess.run([javac, '-encoding', 'UTF-8', '-cp', javac_cp, '-d', bin_dir] + java_files, capture_output=True, text=True, encoding='utf-8', errors='replace')
 print("javac:", res.stdout, res.stderr)
 if res.returncode != 0:
     exit(1)
@@ -86,7 +86,7 @@ print("4. Compiling classes to DEX with D8...")
 class_pkg_dir = os.path.join(bin_dir, 'com', 'moto', 'resolutionmaster')
 class_files = [os.path.join(class_pkg_dir, f) for f in os.listdir(class_pkg_dir) if f.endswith('.class')]
 d8_cmd = [java, '-cp', r8, 'com.android.tools.r8.D8', '--min-api', '26', '--lib', android_jar, '--output', bin_dir] + class_files + shizuku_jars
-res = subprocess.run(d8_cmd, capture_output=True, text=True, encoding='utf-8')
+res = subprocess.run(d8_cmd, capture_output=True, text=True, encoding='utf-8', errors='replace')
 print("D8:", res.stdout, res.stderr)
 if res.returncode != 0:
     exit(1)
@@ -118,16 +118,16 @@ sign_apk_java = os.path.join(base_dir, 'SignApk.java')
 if not os.path.exists(sign_apk_class):
     subprocess.run([javac, '-cp', apksig_jar, sign_apk_java], check=True)
 
-res = subprocess.run([java, '-cp', f'{apksig_jar};{base_dir}', 'SignApk', unaligned_apk, signed_apk, keystore, 'android', 'androiddebugkey'], capture_output=True, text=True, encoding='utf-8')
+res = subprocess.run([java, '-cp', f'{apksig_jar};{base_dir}', 'SignApk', unaligned_apk, signed_apk, keystore, 'android', 'androiddebugkey'], capture_output=True, text=True, encoding='utf-8', errors='replace')
 print("ApkSigner:", res.stdout, res.stderr)
 if res.returncode != 0:
     exit(1)
 
 # Copy final release artifact
-release_apk_v29 = os.path.join(base_dir, 'LenovoMotorolovichY70_v2.9.apk')
-shutil.copy2(signed_apk, release_apk_v29)
+release_apk_v30 = os.path.join(base_dir, 'LenovoMotorolovichY70_v3.0.apk')
+shutil.copy2(signed_apk, release_apk_v30)
 
 print("\nSUCCESS! APK built and signed successfully at:")
 print(signed_apk)
-print("Release v2.9 copy created at:", release_apk_v29)
-print("APK file size:", os.path.getsize(release_apk_v29), "bytes")
+print("Release v3.0 copy created at:", release_apk_v30)
+print("APK file size:", os.path.getsize(release_apk_v30), "bytes")

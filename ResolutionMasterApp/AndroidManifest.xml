@@ -1,7 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.moto.resolutionmaster"
-    android:versionCode="29"
-    android:versionName="2.9">
+    android:versionCode="30"
+    android:versionName="3.0">
 
     <uses-sdk android:minSdkVersion="26" android:targetSdkVersion="34" />
 
@@ -107,6 +107,16 @@
             <property
                 android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
                 android:value="status_bar_network_speed_monitor" />
+        </service>
+
+        <!-- Smart Always On Display (AOD) Timeout Service -->
+        <service
+            android:name=".AodTimeoutService"
+            android:exported="false"
+            android:foregroundServiceType="specialUse">
+            <property
+                android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
+                android:value="aod_timeout_fade_timer" />
         </service>
 
         <!-- Boot Receiver for Auto-Start Speed Indicator -->

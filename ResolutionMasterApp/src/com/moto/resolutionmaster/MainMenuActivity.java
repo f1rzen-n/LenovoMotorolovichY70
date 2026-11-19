@@ -46,6 +46,37 @@ public class MainMenuActivity extends Activity {
     private Button btnExportNfc;
     private Button btnUninstallNfc;
 
+    // Top Privilege Status Button
+    private Button btnHeaderPrivilege;
+
+    // HUD Row 2 Views
+    private TextView tvHudOled;
+    private TextView tvHudAod;
+    private TextView tvHudPower;
+    private TextView tvHudNfc;
+
+    // Category Quick-Jump Chips & Root ScrollView
+    private View scrollMainMenu;
+    private View chipJumpDisplay;
+    private View chipJumpEyecare;
+    private View chipJumpAod;
+    private View chipJumpTouch;
+    private View chipJumpPower;
+    private View chipJumpNet;
+    private View chipJumpAudio;
+    private View chipJumpDebloat;
+    private View chipJumpNfc;
+
+    // Always On Display (AOD Timeout / Fade) Controls
+    private Button btnToggleAodTimeout;
+    private View layoutAodSettings;
+    private Button btnAod5s;
+    private Button btnAod10s;
+    private Button btnAod15s;
+    private Button btnAod30s;
+    private Button btnAod60s;
+    private Button btnAodKeepCharging;
+
     // Eye Care Controls
     private Button btnToggleDcDimming;
     private Button btnToggleNightLight;
@@ -135,6 +166,11 @@ public class MainMenuActivity extends Activity {
         tvMenuFps = findViewById(R.id.tv_menu_fps);
         tvMenuShizuku = findViewById(R.id.tv_menu_shizuku);
         tvMenuSecure = findViewById(R.id.tv_menu_secure);
+        btnHeaderPrivilege = findViewById(R.id.btn_header_privilege);
+        tvHudOled = findViewById(R.id.tv_hud_oled);
+        tvHudAod = findViewById(R.id.tv_hud_aod);
+        tvHudPower = findViewById(R.id.tv_hud_power);
+        tvHudNfc = findViewById(R.id.tv_hud_nfc);
 
         if (tvMenuSecure != null) {
             tvMenuSecure.setOnClickListener(new View.OnClickListener() {
@@ -316,6 +352,8 @@ public class MainMenuActivity extends Activity {
         setupAudioControls();
         setupPowerControls();
         setupNetworkSpeedControls();
+        setupAodControls();
+        setupCategoryJumpChips();
 
         try {
             getContentResolver().registerContentObserver(
@@ -373,6 +411,9 @@ public class MainMenuActivity extends Activity {
         super.onResume();
         autoGrantIfPossible();
         TouchSpeedHelper.invalidateCache();
+        if (AodTimeoutHelper.isEnabled(this)) {
+            AodTimeoutService.start(this);
+        }
         updateStatus();
     }
 
@@ -437,6 +478,40 @@ public class MainMenuActivity extends Activity {
             }
         }
 
+        updatePrivilegeButton();
+
+        if (tvHudOled != null) {
+            boolean dc = EyeCareHelper.isDcDimmingActive(this);
+            if (dc) {
+                tvHudOled.setText("DC Dimming: Вкл ✓");
+                tvHudOled.setTextColor(0xFF10B981);
+            } else {
+                tvHudOled.setText("DC Dimming: Выкл");
+                tvHudOled.setTextColor(0xFF9E9E9E);
+            }
+        }
+        if (tvHudAod != null) {
+            boolean aodEnabled = AodTimeoutHelper.isEnabled(this);
+            if (aodEnabled) {
+                tvHudAod.setText("AOD: " + AodTimeoutHelper.getTimeoutSeconds(this) + "с ✓");
+                tvHudAod.setTextColor(0xFFC084FC);
+            } else {
+                tvHudAod.setText("AOD: Постоянный");
+                tvHudAod.setTextColor(0xFF9E9E9E);
+            }
+        }
+        if (tvHudPower != null) {
+            boolean bypass = PowerHelper.isBypassChargingActive(this);
+            if (bypass) {
+                tvHudPower.setText("Bypass: Вкл ⚡");
+                tvHudPower.setTextColor(0xFF10B981);
+            } else {
+                tvHudPower.setText("Bypass: Выкл");
+                tvHudPower.setTextColor(0xFF9E9E9E);
+            }
+        }
+
+        updateAodUI();
         updateNfcStatusUI();
 
         int curTouch = TouchSpeedHelper.getPointerSpeed(this);
@@ -1733,6 +1808,15 @@ public class MainMenuActivity extends Activity {
             tvNfcStatus.setText("Маршруты NFC: " + nfcInfo.getDisplayStatus());
             tvNfcStatus.setTextColor(nfcInfo.getStatusColor());
         }
+        if (tvHudNfc != null) {
+            if (nfcInfo.status == NfcFixHelper.NfcStatus.FIXED_100_PERCENT) {
+                tvHudNfc.setText("NFC: Исправлен ✓");
+                tvHudNfc.setTextColor(0xFF10B981);
+            } else {
+                tvHudNfc.setText("NFC: Сток");
+                tvHudNfc.setTextColor(0xFF9E9E9E);
+            }
+        }
         if (nfcInfo.status == NfcFixHelper.NfcStatus.FIXED_100_PERCENT) {
             if (btnInstallNfc != null) {
                 btnInstallNfc.setEnabled(true);
@@ -1748,6 +1832,256 @@ public class MainMenuActivity extends Activity {
             btnUninstallNfc.setEnabled(true);
             btnUninstallNfc.setVisibility(View.VISIBLE);
             btnUninstallNfc.setText("🔄 Откат к стоку (eSE1)");
+        }
+    }
+
+    private void updatePrivilegeButton() {
+        if (btnHeaderPrivilege == null) return;
+
+        if (ShellHelper.isRootAvailable()) {
+            btnHeaderPrivilege.setText("⚡ Root: Активен ✓");
+            btnHeaderPrivilege.setBackgroundResource(R.drawable.btn_badge_root);
+            btnHeaderPrivilege.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Toast.makeText(MainMenuActivity.this, "Root-доступ активен. Приложение работает с максимальными правами суперпользователя.", Toast.LENGTH_SHORT).show();
+                }
+            });
+        } else if (ShellHelper.isShizukuPermissionGranted()) {
+            btnHeaderPrivilege.setText("🛡️ Shizuku: Активен ✓");
+            btnHeaderPrivilege.setBackgroundResource(R.drawable.btn_badge_shizuku);
+            btnHeaderPrivilege.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Toast.makeText(MainMenuActivity.this, "Служба Shizuku подключена. Все настройки применяются без Root.", Toast.LENGTH_SHORT).show();
+                }
+            });
+        } else if (ShellHelper.isShizukuRunning()) {
+            btnHeaderPrivilege.setText("⚠️ Shizuku: Выдать доступ");
+            btnHeaderPrivilege.setBackgroundResource(R.drawable.btn_badge_warning);
+            btnHeaderPrivilege.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    ShellHelper.requestShizukuPermission();
+                }
+            });
+        } else if (ShellHelper.isShizukuInstalled(this)) {
+            btnHeaderPrivilege.setText("⚠️ Запустить Shizuku");
+            btnHeaderPrivilege.setBackgroundResource(R.drawable.btn_badge_warning);
+            btnHeaderPrivilege.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    ShellHelper.openShizuku(MainMenuActivity.this);
+                }
+            });
+        } else {
+            btnHeaderPrivilege.setText("⬇️ Установить Shizuku");
+            btnHeaderPrivilege.setBackgroundResource(R.drawable.btn_badge_download);
+            btnHeaderPrivilege.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    showShizukuInstallChooserDialog();
+                }
+            });
+        }
+    }
+
+    private void showShizukuInstallChooserDialog() {
+        final String[] options = new String[] {
+            "1. Google Play Store",
+            "2. GitHub Releases (APK)",
+            "3. 4PDA Форум (Тема и инструкции)"
+        };
+
+        new AlertDialog.Builder(this)
+            .setTitle("Установка Shizuku")
+            .setItems(options, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    Intent intent;
+                    switch (which) {
+                        case 0:
+                            try {
+                                intent = new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=moe.shizuku.privileged.api"));
+                                startActivity(intent);
+                            } catch (Exception e) {
+                                intent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=moe.shizuku.privileged.api"));
+                                startActivity(intent);
+                            }
+                            break;
+                        case 1:
+                            intent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/RikkaApps/Shizuku/releases"));
+                            startActivity(intent);
+                            break;
+                        case 2:
+                            intent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://4pda.to/forum/index.php?showtopic=964895"));
+                            startActivity(intent);
+                            break;
+                    }
+                }
+            })
+            .setNegativeButton("Отмена", null)
+            .show();
+    }
+
+    private void setupCategoryJumpChips() {
+        scrollMainMenu = findViewById(R.id.scroll_main_menu);
+
+        chipJumpDisplay = findViewById(R.id.chip_jump_display);
+        chipJumpEyecare = findViewById(R.id.chip_jump_eyecare);
+        chipJumpAod = findViewById(R.id.chip_jump_aod);
+        chipJumpTouch = findViewById(R.id.chip_jump_touch);
+        chipJumpPower = findViewById(R.id.chip_jump_power);
+        chipJumpNet = findViewById(R.id.chip_jump_net);
+        chipJumpAudio = findViewById(R.id.chip_jump_audio);
+        chipJumpDebloat = findViewById(R.id.chip_jump_debloat);
+        chipJumpNfc = findViewById(R.id.chip_jump_nfc);
+
+        bindJumpChip(chipJumpDisplay, R.id.card_nav_display);
+        bindJumpChip(chipJumpEyecare, R.id.card_eye_care);
+        bindJumpChip(chipJumpAod, R.id.card_aod_control);
+        bindJumpChip(chipJumpTouch, R.id.card_touch_control);
+        bindJumpChip(chipJumpPower, R.id.card_power_control);
+        bindJumpChip(chipJumpNet, R.id.card_network_speed);
+        bindJumpChip(chipJumpAudio, R.id.card_audio_control);
+        bindJumpChip(chipJumpDebloat, R.id.card_nav_debloat);
+        bindJumpChip(chipJumpNfc, R.id.card_nfc_fix);
+    }
+
+    private void bindJumpChip(View chip, final int targetCardId) {
+        if (chip == null) return;
+        chip.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                final View target = findViewById(targetCardId);
+                if (target != null && scrollMainMenu != null) {
+                    scrollMainMenu.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            int top = target.getTop();
+                            ((android.widget.ScrollView) scrollMainMenu).smoothScrollTo(0, Math.max(0, top - 30));
+                        }
+                    });
+                }
+            }
+        });
+    }
+
+    private void setupAodControls() {
+        btnToggleAodTimeout = findViewById(R.id.btn_toggle_aod_timeout);
+        layoutAodSettings = findViewById(R.id.layout_aod_settings);
+        btnAod5s = findViewById(R.id.btn_aod_5s);
+        btnAod10s = findViewById(R.id.btn_aod_10s);
+        btnAod15s = findViewById(R.id.btn_aod_15s);
+        btnAod30s = findViewById(R.id.btn_aod_30s);
+        btnAod60s = findViewById(R.id.btn_aod_60s);
+        btnAodKeepCharging = findViewById(R.id.btn_aod_keep_charging);
+
+        if (btnToggleAodTimeout != null) {
+            btnToggleAodTimeout.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (!ShellHelper.hasWriteSecureSettings(MainMenuActivity.this) && !ShellHelper.isRootAvailable()) {
+                        showSecureSettingsDialog();
+                        return;
+                    }
+                    boolean enabled = !AodTimeoutHelper.isEnabled(MainMenuActivity.this);
+                    AodTimeoutHelper.setEnabled(MainMenuActivity.this, enabled);
+                    if (enabled) {
+                        AodTimeoutService.start(MainMenuActivity.this);
+                        Toast.makeText(MainMenuActivity.this, "Умное затухание AOD включено", Toast.LENGTH_SHORT).show();
+                    } else {
+                        AodTimeoutService.stop(MainMenuActivity.this);
+                        AodTimeoutHelper.setDozeAlwaysOn(MainMenuActivity.this, true);
+                        Toast.makeText(MainMenuActivity.this, "Умное затухание AOD отключено", Toast.LENGTH_SHORT).show();
+                    }
+                    updateAodUI();
+                    updateStatus();
+                }
+            });
+        }
+
+        View.OnClickListener durationListener = new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                int secs = 15;
+                int id = v.getId();
+                if (id == R.id.btn_aod_5s) secs = 5;
+                else if (id == R.id.btn_aod_10s) secs = 10;
+                else if (id == R.id.btn_aod_15s) secs = 15;
+                else if (id == R.id.btn_aod_30s) secs = 30;
+                else if (id == R.id.btn_aod_60s) secs = 60;
+
+                AodTimeoutHelper.setTimeoutSeconds(MainMenuActivity.this, secs);
+                updateAodUI();
+                updateStatus();
+                Toast.makeText(MainMenuActivity.this, "AOD гаснет через " + secs + " сек", Toast.LENGTH_SHORT).show();
+            }
+        };
+
+        if (btnAod5s != null) btnAod5s.setOnClickListener(durationListener);
+        if (btnAod10s != null) btnAod10s.setOnClickListener(durationListener);
+        if (btnAod15s != null) btnAod15s.setOnClickListener(durationListener);
+        if (btnAod30s != null) btnAod30s.setOnClickListener(durationListener);
+        if (btnAod60s != null) btnAod60s.setOnClickListener(durationListener);
+
+        if (btnAodKeepCharging != null) {
+            btnAodKeepCharging.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    boolean cur = AodTimeoutHelper.isKeepOnWhileCharging(MainMenuActivity.this);
+                    AodTimeoutHelper.setKeepOnWhileCharging(MainMenuActivity.this, !cur);
+                    updateAodUI();
+                }
+            });
+        }
+
+        updateAodUI();
+    }
+
+    private void updateAodUI() {
+        boolean enabled = AodTimeoutHelper.isEnabled(this);
+        if (btnToggleAodTimeout != null) {
+            if (enabled) {
+                btnToggleAodTimeout.setText("✓ Умное затухание включено");
+                btnToggleAodTimeout.setBackgroundResource(R.drawable.btn_purple);
+            } else {
+                btnToggleAodTimeout.setText("Включить умное затухание AOD");
+                btnToggleAodTimeout.setBackgroundResource(R.drawable.btn_primary);
+            }
+        }
+
+        if (layoutAodSettings != null) {
+            layoutAodSettings.setVisibility(enabled ? View.VISIBLE : View.GONE);
+        }
+
+        int currentSecs = AodTimeoutHelper.getTimeoutSeconds(this);
+        updateAodDurationButton(btnAod5s, currentSecs == 5);
+        updateAodDurationButton(btnAod10s, currentSecs == 10);
+        updateAodDurationButton(btnAod15s, currentSecs == 15);
+        updateAodDurationButton(btnAod30s, currentSecs == 30);
+        updateAodDurationButton(btnAod60s, currentSecs == 60);
+
+        if (btnAodKeepCharging != null) {
+            boolean keepCharging = AodTimeoutHelper.isKeepOnWhileCharging(this);
+            if (keepCharging) {
+                btnAodKeepCharging.setText("✓ Не гасить AOD при зарядке (Активно)");
+                btnAodKeepCharging.setTextColor(0xFFC084FC);
+            } else {
+                btnAodKeepCharging.setText("Не гасить AOD при зарядке (Выкл)");
+                btnAodKeepCharging.setTextColor(0xFF9E9E9E);
+            }
+        }
+    }
+
+    private void updateAodDurationButton(Button btn, boolean isSelected) {
+        if (btn == null) return;
+        if (isSelected) {
+            btn.setBackgroundResource(R.drawable.btn_purple);
+            btn.setTextColor(0xFFFFFFFF);
+        } else {
+            btn.setBackgroundResource(R.drawable.btn_chip);
+            btn.setTextColor(0xFFD1D5DB);
         }
     }
 

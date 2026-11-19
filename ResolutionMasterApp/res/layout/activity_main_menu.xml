@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/scroll_main_menu"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/bg_dark"
@@ -11,7 +12,7 @@
         android:orientation="vertical"
         android:padding="20dp">
 
-        <!-- App Header -->
+        <!-- App Header with Dynamic Privilege Status Button -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -37,41 +38,55 @@
                     android:layout_height="wrap_content"
                     android:text="LenovoMotorolovichY70"
                     android:textColor="@color/text_primary"
-                    android:textSize="20sp"
+                    android:textSize="18sp"
                     android:textStyle="bold" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Legion Y70 &amp; Moto Edge 70 Max Master"
+                    android:text="Legion Y70 &amp; Moto Edge 70 Max v3.0"
                     android:textColor="@color/text_secondary"
-                    android:textSize="12sp"
+                    android:textSize="11sp"
                     android:layout_marginTop="2dp" />
             </LinearLayout>
+
+            <TextView
+                android:id="@+id/btn_header_privilege"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/btn_badge_shizuku"
+                android:text="🛡️ Shizuku ✓"
+                android:textColor="#FFFFFF"
+                android:textSize="11sp"
+                android:textStyle="bold"
+                android:gravity="center"
+                android:clickable="true"
+                android:focusable="true" />
         </LinearLayout>
 
-        <!-- Current Status Card -->
+        <!-- Current Status Card (System HUD) -->
         <LinearLayout
+            android:id="@+id/card_system_hud"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:background="@drawable/card_bg"
+            android:layout_marginTop="16dp"
+            android:background="@drawable/card_hud_bg"
             android:orientation="vertical"
-            android:padding="16dp">
+            android:padding="14dp">
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="ТЕКУЩЕЕ СОСТОЯНИЕ СИСТЕМЫ"
+                android:text="⚡ СВОДКА СИСТЕМЫ (ПРИМЕНЕНО В СИСТЕМЕ)"
                 android:textColor="@color/text_muted"
-                android:textSize="11sp"
+                android:textSize="10sp"
                 android:textStyle="bold" />
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:layout_marginTop="10dp">
+                android:layout_marginTop="8dp">
 
                 <LinearLayout
                     android:layout_width="0dp"
@@ -92,7 +107,7 @@
                         android:layout_height="wrap_content"
                         android:text="1080 × 2376"
                         android:textColor="@color/text_primary"
-                        android:textSize="16sp"
+                        android:textSize="15sp"
                         android:textStyle="bold" />
 
                     <TextView
@@ -123,7 +138,7 @@
                         android:layout_height="wrap_content"
                         android:text="144 Гц"
                         android:textColor="@color/accent_purple"
-                        android:textSize="16sp"
+                        android:textSize="15sp"
                         android:textStyle="bold" />
 
                     <TextView
@@ -141,7 +156,7 @@
                         android:text="Тайлы шторки: Активны ✓"
                         android:textColor="@color/accent_green"
                         android:textSize="11sp"
-                        android:layout_marginTop="3dp" />
+                        android:layout_marginTop="2dp" />
 
                     <TextView
                         android:id="@+id/tv_menu_touch_status"
@@ -150,10 +165,212 @@
                         android:text="Отклик тача: 0 (Сток)"
                         android:textColor="@color/accent_purple"
                         android:textSize="11sp"
+                        android:layout_marginTop="2dp" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <!-- HUD Row 2: OLED / AOD / Power / NFC -->
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/card_stroke"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="8dp" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/tv_hud_oled"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="👁️ DC Dimming: Проверка..."
+                        android:textColor="@color/accent_cyan"
+                        android:textSize="11sp" />
+
+                    <TextView
+                        android:id="@+id/tv_hud_aod"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="🌙 AOD: Выкл"
+                        android:textColor="@color/accent_purple"
+                        android:textSize="11sp"
+                        android:layout_marginTop="3dp" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/tv_hud_power"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="🔋 Батарея: Проверка..."
+                        android:textColor="@color/accent_green"
+                        android:textSize="11sp" />
+
+                    <TextView
+                        android:id="@+id/tv_hud_nfc"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="💳 NFC: Проверка..."
+                        android:textColor="@color/accent_blue"
+                        android:textSize="11sp"
                         android:layout_marginTop="3dp" />
                 </LinearLayout>
             </LinearLayout>
         </LinearLayout>
+
+        <!-- Category Quick-Jump Bar (Horizontal) -->
+        <HorizontalScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="14dp"
+            android:scrollbars="none"
+            android:overScrollMode="never">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <Button
+                    android:id="@+id/chip_jump_display"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:minHeight="34dp"
+                    android:background="@drawable/btn_chip"
+                    android:text="📱 Экран"
+                    android:textAllCaps="false"
+                    android:textColor="@color/text_primary"
+                    android:textSize="11sp"
+                    android:paddingStart="10dp"
+                    android:paddingEnd="10dp"
+                    android:layout_marginEnd="5dp" />
+
+                <Button
+                    android:id="@+id/chip_jump_eyecare"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:minHeight="34dp"
+                    android:background="@drawable/btn_chip"
+                    android:text="👁️ Анти-ШИМ"
+                    android:textAllCaps="false"
+                    android:textColor="@color/text_primary"
+                    android:textSize="11sp"
+                    android:paddingStart="10dp"
+                    android:paddingEnd="10dp"
+                    android:layout_marginEnd="5dp" />
+
+                <Button
+                    android:id="@+id/chip_jump_aod"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:minHeight="34dp"
+                    android:background="@drawable/btn_chip"
+                    android:text="🌙 AOD"
+                    android:textAllCaps="false"
+                    android:textColor="@color/text_primary"
+                    android:textSize="11sp"
+                    android:paddingStart="10dp"
+                    android:paddingEnd="10dp"
+                    android:layout_marginEnd="5dp" />
+
+                <Button
+                    android:id="@+id/chip_jump_touch"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:minHeight="34dp"
+                    android:background="@drawable/btn_chip"
+                    android:text="⚡ 1500Hz Тач"
+                    android:textAllCaps="false"
+                    android:textColor="@color/text_primary"
+                    android:textSize="11sp"
+                    android:paddingStart="10dp"
+                    android:paddingEnd="10dp"
+                    android:layout_marginEnd="5dp" />
+
+                <Button
+                    android:id="@+id/chip_jump_power"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:minHeight="34dp"
+                    android:background="@drawable/btn_chip"
+                    android:text="🔋 Bypass"
+                    android:textAllCaps="false"
+                    android:textColor="@color/text_primary"
+                    android:textSize="11sp"
+                    android:paddingStart="10dp"
+                    android:paddingEnd="10dp"
+                    android:layout_marginEnd="5dp" />
+
+                <Button
+                    android:id="@+id/chip_jump_net"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:minHeight="34dp"
+                    android:background="@drawable/btn_chip"
+                    android:text="📶 Скорость"
+                    android:textAllCaps="false"
+                    android:textColor="@color/text_primary"
+                    android:textSize="11sp"
+                    android:paddingStart="10dp"
+                    android:paddingEnd="10dp"
+                    android:layout_marginEnd="5dp" />
+
+                <Button
+                    android:id="@+id/chip_jump_audio"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:minHeight="34dp"
+                    android:background="@drawable/btn_chip"
+                    android:text="🎵 Звук"
+                    android:textAllCaps="false"
+                    android:textColor="@color/text_primary"
+                    android:textSize="11sp"
+                    android:paddingStart="10dp"
+                    android:paddingEnd="10dp"
+                    android:layout_marginEnd="5dp" />
+
+                <Button
+                    android:id="@+id/chip_jump_debloat"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:minHeight="34dp"
+                    android:background="@drawable/btn_chip"
+                    android:text="🧹 Debloater"
+                    android:textAllCaps="false"
+                    android:textColor="@color/text_primary"
+                    android:textSize="11sp"
+                    android:paddingStart="10dp"
+                    android:paddingEnd="10dp"
+                    android:layout_marginEnd="5dp" />
+
+                <Button
+                    android:id="@+id/chip_jump_nfc"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:minHeight="34dp"
+                    android:background="@drawable/btn_chip"
+                    android:text="💳 NFC Fix"
+                    android:textAllCaps="false"
+                    android:textColor="@color/text_primary"
+                    android:textSize="11sp"
+                    android:paddingStart="10dp"
+                    android:paddingEnd="10dp" />
+            </LinearLayout>
+        </HorizontalScrollView>
 
 
         <!-- Menu Section Header -->
@@ -182,11 +399,17 @@
                 android:orientation="horizontal"
                 android:gravity="center_vertical">
 
+                <ImageView
+                    android:layout_width="22dp"
+                    android:layout_height="22dp"
+                    android:src="@drawable/ic_cat_display"
+                    android:layout_marginEnd="8dp" />
+
                 <TextView
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="🖥️ Настройки дисплея"
+                    android:text="Настройки дисплея"
                     android:textColor="@color/text_primary"
                     android:textSize="17sp"
                     android:textStyle="bold" />
@@ -249,11 +472,17 @@
                 android:orientation="horizontal"
                 android:gravity="center_vertical">
 
+                <ImageView
+                    android:layout_width="22dp"
+                    android:layout_height="22dp"
+                    android:src="@drawable/ic_cat_touch"
+                    android:layout_marginEnd="8dp" />
+
                 <TextView
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="⚡ Управление откликом сенсора (Тач)"
+                    android:text="Отклик сенсора и Турбо-режим"
                     android:textColor="@color/text_primary"
                     android:textSize="17sp"
                     android:textStyle="bold" />
@@ -534,11 +763,17 @@
                 android:orientation="horizontal"
                 android:gravity="center_vertical">
 
+                <ImageView
+                    android:layout_width="22dp"
+                    android:layout_height="22dp"
+                    android:src="@drawable/ic_cat_eyecare"
+                    android:layout_marginEnd="8dp" />
+
                 <TextView
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="👁️ Защита глаз и экран (OLED)"
+                    android:text="Защита глаз и экран (OLED)"
                     android:textColor="@color/text_primary"
                     android:textSize="17sp"
                     android:textStyle="bold" />
@@ -1005,6 +1240,179 @@
             </LinearLayout>
         </LinearLayout>
 
+        <!-- Card: Умное затухание AOD (Always On Display) -->
+        <LinearLayout
+            android:id="@+id/card_aod_control"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:background="@drawable/card_bg"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+
+                <ImageView
+                    android:layout_width="22dp"
+                    android:layout_height="22dp"
+                    android:src="@drawable/ic_cat_aod"
+                    android:layout_marginEnd="8dp" />
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Умное затухание AOD"
+                    android:textColor="@color/accent_purple"
+                    android:textSize="14sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/btn_chip"
+                    android:paddingStart="8dp"
+                    android:paddingEnd="8dp"
+                    android:paddingTop="3dp"
+                    android:paddingBottom="3dp"
+                    android:text="OLED Защита"
+                    android:textColor="@color/accent_purple"
+                    android:textSize="10sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="• Показывает часы и уведомления при блокировке, а через выбранное время плавно гасит Always On Display (doze_always_on 0)\n• Предотвращает выгорание OLED-матрицы в зоне статических часов\n• Экономит до 15–20% заряда аккумулятора за день\n• При пробуждении или касании AOD моментально восстанавливается"
+                android:textColor="@color/text_secondary"
+                android:textSize="12sp"
+                android:lineSpacingExtra="2dp" />
+
+            <Button
+                android:id="@+id/btn_toggle_aod_timeout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:minHeight="44dp"
+                android:layout_marginTop="12dp"
+                android:background="@drawable/btn_primary"
+                android:text="🌙 Включить умное затухание AOD"
+                android:textAllCaps="false"
+                android:textColor="#FFFFFF"
+                android:textSize="13sp"
+                android:textStyle="bold" />
+
+            <LinearLayout
+                android:id="@+id/layout_aod_settings"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginTop="10dp"
+                android:visibility="gone">
+
+                <TextView
+                    android:id="@+id/tv_aod_timeout_val"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Время до затухания: 15 сек (Рекомендуемое)"
+                    android:textColor="@color/accent_cyan"
+                    android:textSize="12sp"
+                    android:textStyle="bold" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginTop="6dp">
+
+                    <Button
+                        android:id="@+id/btn_aod_5s"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:minHeight="36dp"
+                        android:layout_weight="1"
+                        android:background="@drawable/btn_chip"
+                        android:text="5 сек"
+                        android:textAllCaps="false"
+                        android:textColor="@color/text_primary"
+                        android:textSize="11sp"
+                        android:layout_marginEnd="2dp" />
+
+                    <Button
+                        android:id="@+id/btn_aod_10s"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:minHeight="36dp"
+                        android:layout_weight="1"
+                        android:background="@drawable/btn_chip"
+                        android:text="10 сек"
+                        android:textAllCaps="false"
+                        android:textColor="@color/text_primary"
+                        android:textSize="11sp"
+                        android:layout_marginStart="2dp"
+                        android:layout_marginEnd="2dp" />
+
+                    <Button
+                        android:id="@+id/btn_aod_15s"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:minHeight="36dp"
+                        android:layout_weight="1"
+                        android:background="@drawable/btn_primary"
+                        android:text="15 сек"
+                        android:textAllCaps="false"
+                        android:textColor="#FFFFFF"
+                        android:textSize="11sp"
+                        android:layout_marginStart="2dp"
+                        android:layout_marginEnd="2dp" />
+
+                    <Button
+                        android:id="@+id/btn_aod_30s"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:minHeight="36dp"
+                        android:layout_weight="1"
+                        android:background="@drawable/btn_chip"
+                        android:text="30 сек"
+                        android:textAllCaps="false"
+                        android:textColor="@color/text_primary"
+                        android:textSize="11sp"
+                        android:layout_marginStart="2dp"
+                        android:layout_marginEnd="2dp" />
+
+                    <Button
+                        android:id="@+id/btn_aod_60s"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:minHeight="36dp"
+                        android:layout_weight="1"
+                        android:background="@drawable/btn_chip"
+                        android:text="60 сек"
+                        android:textAllCaps="false"
+                        android:textColor="@color/text_primary"
+                        android:textSize="11sp"
+                        android:layout_marginStart="2dp" />
+                </LinearLayout>
+
+                <Button
+                    android:id="@+id/btn_aod_keep_charging"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:minHeight="40dp"
+                    android:layout_marginTop="8dp"
+                    android:background="@drawable/btn_chip"
+                    android:text="⚡ Не гасить AOD при подключённой зарядке: ВКЛ ✓"
+                    android:textAllCaps="false"
+                    android:textColor="@color/text_primary"
+                    android:textSize="12sp" />
+            </LinearLayout>
+        </LinearLayout>
+
         <!-- Card: Звук и Bluetooth (Audio Control) -->
         <LinearLayout
             android:id="@+id/card_audio_control"
@@ -1021,11 +1429,17 @@
                 android:orientation="horizontal"
                 android:gravity="center_vertical">
 
+                <ImageView
+                    android:layout_width="22dp"
+                    android:layout_height="22dp"
+                    android:src="@drawable/ic_cat_audio"
+                    android:layout_marginEnd="8dp" />
+
                 <TextView
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="🔊 Звук и Bluetooth"
+                    android:text="Звук и Bluetooth"
                     android:textColor="@color/text_primary"
                     android:textSize="17sp"
                     android:textStyle="bold" />
@@ -1201,11 +1615,17 @@
                 android:orientation="horizontal"
                 android:gravity="center_vertical">
 
+                <ImageView
+                    android:layout_width="22dp"
+                    android:layout_height="22dp"
+                    android:src="@drawable/ic_cat_power"
+                    android:layout_marginEnd="8dp" />
+
                 <TextView
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="⚡ Питание и Bypass Charging"
+                    android:text="Питание и Bypass Charging"
                     android:textColor="@color/text_primary"
                     android:textSize="17sp"
                     android:textStyle="bold" />
@@ -1333,11 +1753,17 @@
                 android:orientation="horizontal"
                 android:gravity="center_vertical">
 
+                <ImageView
+                    android:layout_width="22dp"
+                    android:layout_height="22dp"
+                    android:src="@drawable/ic_cat_net"
+                    android:layout_marginEnd="8dp" />
+
                 <TextView
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="📶 Скорость сети в статус-баре"
+                    android:text="Скорость сети в статус-баре"
                     android:textColor="@color/text_primary"
                     android:textSize="17sp"
                     android:textStyle="bold" />
@@ -1523,11 +1949,17 @@
                 android:orientation="horizontal"
                 android:gravity="center_vertical">
 
+                <ImageView
+                    android:layout_width="22dp"
+                    android:layout_height="22dp"
+                    android:src="@drawable/ic_cat_debloat"
+                    android:layout_marginEnd="8dp" />
+
                 <TextView
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="🚫 Отключение APK (Debloater)"
+                    android:text="Отключение APK (Debloater)"
                     android:textColor="@color/text_primary"
                     android:textSize="17sp"
                     android:textStyle="bold" />
@@ -1590,11 +2022,17 @@
                 android:orientation="horizontal"
                 android:gravity="center_vertical">
 
+                <ImageView
+                    android:layout_width="22dp"
+                    android:layout_height="22dp"
+                    android:src="@drawable/ic_cat_nfc"
+                    android:layout_marginEnd="8dp" />
+
                 <TextView
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="⚡ Фикс NFC (Mir Pay / СБПэй)"
+                    android:text="Фикс NFC (Mir Pay / СБПэй)"
                     android:textColor="@color/text_primary"
                     android:textSize="17sp"
                     android:textStyle="bold" />

@@ -19,6 +19,9 @@ public class BootReceiver extends BroadcastReceiver {
                 if (NetworkSpeedHelper.isEnabled(context) && NetworkSpeedHelper.isAutoStartEnabled(context)) {
                     NetworkSpeedHelper.setEnabled(context, true);
                 }
+                if (AodTimeoutHelper.isEnabled(context)) {
+                    AodTimeoutHelper.setEnabled(context, true);
+                }
             } catch (Throwable t) {
                 Log.w(TAG, "Auto-start NetworkSpeed failed: " + t.getMessage());
             }

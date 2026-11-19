@@ -500,7 +500,7 @@ public class NetworkSpeedService extends Service {
             pill.setPadding(padH, padV, padH, padV);
 
             GradientDrawable bg = new GradientDrawable();
-            bg.setColor(0x52000000);
+            bg.setColor(Color.TRANSPARENT);
             bg.setCornerRadius(dpToPx(5));
             pill.setBackground(bg);
 
