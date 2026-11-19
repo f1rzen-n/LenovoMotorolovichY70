@@ -1,8 +1,22 @@
-# LenovoMotorolovichY70
+<p align="center">
+  <img src="logo.png" width="128" height="128" alt="LenovoMotorolovichY70 Logo">
+</p>
 
-Набор твиков и системных настроек для смартфонов **Lenovo Legion Y70** и **Motorola Edge 70 Max** (Android 12+).
+<h1 align="center">LenovoMotorolovichY70</h1>
 
-Работает через **Shizuku** (без Root) или с правами **Root** (Magisk / KernelSU / APatch). Без рекламы и телеметрии.
+<p align="center">
+  <a href="#"><img src="https://img.shields.io/badge/Platform-Android%2012%2B-green.svg" alt="Platform"></a>
+  <a href="#"><img src="https://img.shields.io/badge/Device-Lenovo%20Legion%20Y70%20%7C%20Moto%20Edge%2070%20Max-blue.svg" alt="Device"></a>
+  <a href="#"><img src="https://img.shields.io/badge/SoC-Snapdragon%208%2B%20Gen%201-orange.svg" alt="SoC"></a>
+  <a href="#"><img src="https://img.shields.io/badge/Access-Shizuku%20(No%20Root)%20%7C%20Root-red.svg" alt="Access"></a>
+  <a href="#"><img src="https://img.shields.io/badge/APK%20Size-~800%20KB-brightgreen.svg" alt="APK Size"></a>
+  <a href="#"><img src="https://img.shields.io/badge/Telemetry-None%20%2F%20No%20Ads-success.svg" alt="Telemetry"></a>
+</p>
+
+<p align="center">
+  Набор системных твиков и утилит для смартфонов <b>Lenovo Legion Y70</b> и <b>Motorola Edge 70 Max</b> (Android 12+).<br>
+  Работает через <b>Shizuku</b> (без Root) или с правами <b>Root</b> (Magisk / KernelSU / APatch). Без рекламы и аналитики.
+</p>
 
 ---
 
