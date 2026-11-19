@@ -11,6 +11,7 @@
   <a href="#"><img src="https://img.shields.io/badge/Access-Shizuku%20(No%20Root)%20%7C%20Root-red.svg" alt="Access"></a>
   <a href="#"><img src="https://img.shields.io/badge/APK%20Size-~800%20KB-brightgreen.svg" alt="APK Size"></a>
   <a href="#"><img src="https://img.shields.io/badge/Telemetry-None%20%2F%20No%20Ads-success.svg" alt="Telemetry"></a>
+  <a href="https://4pda.to/forum/index.php?showtopic=1121132"><img src="https://img.shields.io/badge/Forum-4PDA-blue.svg" alt="4PDA"></a>
 </p>
 
 <p align="center">
@@ -59,8 +60,15 @@
 
 ### 8. Фикс NFC
 * Графический интерфейс для переключения маршрутов NFC на процессор хоста (DH 0x00).
-* Интегрирован фикс от автора **stepchansky** (4PDA).
+* Интегрирован фикс от автора [stepchansky на 4PDA](https://4pda.to/forum/index.php?showtopic=1121132&view=findpost&p=146040708).
 * Поддержка экспорта готового архива для Magisk / KernelSU / APatch и возврат к стоковым маршрутам.
+
+---
+
+## Ссылки на 4PDA
+* **Основная тема устройства:** [Lenovo Legion Y70 — Прошивки на 4PDA](https://4pda.to/forum/index.php?showtopic=1121132)
+* **Пост автора приложения:** [nik.reneyj (Пост #145909028)](https://4pda.to/forum/index.php?showtopic=1121132&view=findpost&p=145909028)
+* **Пост автора алгоритма фикса NFC:** [stepchansky (Пост #146040708)](https://4pda.to/forum/index.php?showtopic=1121132&view=findpost&p=146040708)
 
 ---
 
