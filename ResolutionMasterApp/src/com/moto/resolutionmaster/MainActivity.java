@@ -817,7 +817,7 @@ public class MainActivity extends Activity {
                     }
                     updateStatusUI();
                     if (ok) {
-                        Toast.makeText(MainActivity.this, "⚡ Турбо-режим: 144 Гц + Сенсор 1500 Гц + UI 0.5x!", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(MainActivity.this, "⚡ Турбо-режим: 144 Гц + Макс. отклик + UI 0.5x!", Toast.LENGTH_SHORT).show();
                     } else {
                         Toast.makeText(MainActivity.this, "Ошибка применения Турбо-режима (проверьте Shizuku/Root)", Toast.LENGTH_SHORT).show();
                     }

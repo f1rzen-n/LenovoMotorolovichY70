@@ -64,7 +64,7 @@
             android:exported="true"
             android:configChanges="orientation|screenSize|screenLayout" />
 
-        <!-- Touch & 1500Hz Activity -->
+        <!-- Touch Control Activity -->
         <activity
             android:name=".TouchActivity"
             android:exported="true"

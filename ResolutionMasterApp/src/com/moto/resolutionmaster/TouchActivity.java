@@ -148,7 +148,7 @@ public class TouchActivity extends Activity {
                     }
                     updateUI();
                     if (ok) {
-                        Toast.makeText(TouchActivity.this, "⚡ Турбо-режим: 144 Гц + Сенсор 1500 Гц + UI 0.5x!", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(TouchActivity.this, "⚡ Турбо-режим: 144 Гц + Макс. отклик + UI 0.5x!", Toast.LENGTH_SHORT).show();
                     } else {
                         Toast.makeText(TouchActivity.this, "Ошибка применения Турбо-режима (проверьте Shizuku/Root)", Toast.LENGTH_SHORT).show();
                     }

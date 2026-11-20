@@ -33,31 +33,31 @@
 
     <!-- Section 2: Refresh Rate -->
     <string name="section_fps_title">ЧАСТОТА ОБНОВЛЕНИЯ (ГЕРЦОВКА)</string>
-    <string name="section_fps_desc">Фиксация герцовки без просадок. Частота развертки экрана напрямую задает тактовую частоту сенсора тача (от 240 Гц до пиковых 1500 Гц).</string>
+    <string name="section_fps_desc">Фиксация герцовки без просадок. Частота развертки экрана напрямую задает плавность анимаций и отклик сенсора.</string>
 
     <string name="fps_144_title">144 Гц (Экстрим)</string>
-    <string name="fps_144_badge">Гейминг • 1500Hz</string>
-    <string name="fps_144_desc">Постоянные 144 Гц без падений. Разгоняет опрос сенсора Goodix до базовых 480–720 Гц и пиковых 1500 Гц при касаниях и выстрелах (задержка 0.66 мс).</string>
+    <string name="fps_144_badge">Гейминг • 144Hz</string>
+    <string name="fps_144_desc">Постоянные 144 Гц без падений. Максимальная плавность отображения и мгновенная регистрация касаний (задержка 0.66 мс).</string>
     <string name="btn_fps_144">Зафиксировать 144 Гц</string>
 
     <string name="fps_120_title">120 Гц (Баланс)</string>
-    <string name="fps_120_badge">Флагман • 480Hz</string>
-    <string name="fps_120_desc">Фиксированная высокая частота 120 Гц. Базовый опрос сенсора 480 Гц во всех приложениях без мерцания.</string>
+    <string name="fps_120_badge">Флагман • 120Hz</string>
+    <string name="fps_120_desc">Фиксированная высокая частота 120 Гц. Высокая плавность во всех приложениях без мерцания.</string>
     <string name="btn_fps_120">Зафиксировать 120 Гц</string>
 
     <string name="fps_90_title">90 Гц (Золотая середина)</string>
-    <string name="fps_90_badge">-25% Батарея • 360Hz</string>
-    <string name="fps_90_desc">Ощутимо плавнее 60 Гц, опрос сенсора ~360 Гц. Оптимальный баланс между скоростью тача и экономией батареи.</string>
+    <string name="fps_90_badge">-25% Батарея • 90Hz</string>
+    <string name="fps_90_desc">Ощутимо плавнее 60 Гц. Оптимальный баланс между скоростью интерфейса и экономией батареи.</string>
     <string name="btn_fps_90">Зафиксировать 90 Гц</string>
 
     <string name="fps_60_title">60 Гц (Энергосбережение)</string>
-    <string name="fps_60_badge">Max Эко • 240Hz</string>
-    <string name="fps_60_desc">Экономичный режим для чтения и видео. Опрос сенсора ограничен до 240 Гц для максимальной автономности.</string>
+    <string name="fps_60_badge">Max Эко • 60Hz</string>
+    <string name="fps_60_desc">Экономичный режим для чтения и видео с максимальной автономностью.</string>
     <string name="btn_fps_60">Зафиксировать 60 Гц</string>
 
     <string name="fps_auto_title">Авто (Динамический)</string>
     <string name="fps_auto_badge">Адаптивный</string>
-    <string name="fps_auto_desc">Стандартный адаптивный режим: сброс до 60 Гц (240 Гц тач) в покое и подъем до 144 Гц (пик 1500 Гц) при касании.</string>
+    <string name="fps_auto_desc">Стандартный адаптивный режим: сброс до 60 Гц в покое и подъем до 144 Гц при касании.</string>
     <string name="btn_fps_auto">Включить Авто режим</string>
 
     <string name="toast_fps_applied">Установлена частота: %s</string>
@@ -116,13 +116,13 @@
 
     <!-- Section: Touch Control -->
     <string name="section_touch_title">⚡ Управление откликом сенсора (Тач)</string>
-    <string name="touch_badge">Goodix 1500Hz • Турбо</string>
-    <string name="touch_desc" formatted="false">Аппаратный опрос сенсора Goodix: базовые 480–720 Гц при ведении пальца и пиковые 1500 Гц при касаниях и выстрелах (на 144 Гц).\n\nПолзунок регулирует системный фильтр сглаживания Android: 50% (сток) сглаживает естественное дрожание рук, а 100% (турбо) полностью убирает задержку для моментального отклика в играх.</string>
+    <string name="touch_badge">Goodix Touch • Турбо</string>
+    <string name="touch_desc" formatted="false">Аппаратный опрос сенсора Goodix: высокая точность при непрерывном ведении пальца и мгновенный отклик при касаниях.\n\nПолзунок регулирует системный фильтр сглаживания Android: 50% (сток) сглаживает естественное микро-дрожание рук, а 100% (турбо) убирает задержку для моментального отклика в играх.</string>
     <string name="touch_speed_label">Чувствительность отклика:</string>
     <string name="btn_touch_turbo" formatted="false">⚡ Турбо (100%)</string>
     <string name="btn_touch_stock" formatted="false">⚖️ Сток (50%)</string>
     <string name="btn_touch_game" formatted="false">🎮 Игра (85%)</string>
-    <string name="btn_apply_full_turbo">⚡ Включить Турбо-режим (144 Гц + Сенсор 1500 Гц)</string>
+    <string name="btn_apply_full_turbo">⚡ Включить Турбо-режим (144 Гц + Макс. отклик)</string>
     <string name="btn_reset_full_stock" formatted="false">🔄 Сбросить к стоку (Авто Гц + Сток 50% + UI 1.0x)</string>
     <string name="anim_boost_title">🚀 Ускорение системных анимаций (0.5x)</string>
     <string name="anim_boost_desc">Снижает задержку системных переходов и окон в 2 раза, ускоряя визуальный отклик интерфейса.</string>

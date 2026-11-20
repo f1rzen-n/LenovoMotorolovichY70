@@ -1041,7 +1041,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="1500 Hz"
+                    android:text="Goodix Touch"
                     android:textColor="@color/accent_purple"
                     android:textSize="12sp"
                     android:textStyle="bold" />
@@ -1171,7 +1171,7 @@
                     android:paddingBottom="8dp"
                 android:layout_marginTop="12dp"
                 android:background="@drawable/btn_purple"
-                android:text="⚡ Включить Турбо-режим (144 Гц + Сенсор 1500 Гц)"
+                android:text="⚡ Включить Турбо-режим (144 Гц + Макс. отклик)"
                 android:textAllCaps="false"
                 android:textColor="#FFFFFF"
                 android:textSize="13sp"
