@@ -295,6 +295,9 @@ public class DisplayManagerHelper {
         try {
             ContentResolver cr = context.getContentResolver();
             String forced = Settings.Secure.getString(cr, "display_density_forced");
+            if (forced == null || forced.trim().isEmpty() || "null".equalsIgnoreCase(forced)) {
+                forced = Settings.Global.getString(cr, "display_density_forced");
+            }
             if (forced != null && !forced.trim().isEmpty() && !"null".equalsIgnoreCase(forced)) {
                 int d = Integer.parseInt(forced.trim());
                 if (d > 0) return d;

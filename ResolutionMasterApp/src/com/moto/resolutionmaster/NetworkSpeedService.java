@@ -161,7 +161,11 @@ public class NetworkSpeedService extends Service {
                     }
                 } else if (mOverlayRoot != null) {
                     int targetOffsetPx = getClampedOverlayOffsetPx();
-                    if (mOverlayParams != null && Math.abs(mOverlayParams.x - targetOffsetPx) > 3) {
+                    int pillH = (mOverlayPill != null && mOverlayPill.getHeight() > 0)
+                        ? mOverlayPill.getHeight()
+                        : dpToPx(20);
+                    int targetY = Math.max(0, (getStatusBarHeightPx() - pillH) / 2);
+                    if (mOverlayParams != null && (Math.abs(mOverlayParams.x - targetOffsetPx) > 3 || Math.abs(mOverlayParams.y - targetY) > 2)) {
                         updateOverlayPosition();
                     }
                 }
@@ -458,35 +462,84 @@ public class NetworkSpeedService extends Service {
 
     private int getStatusBarHeightPx() {
         float density = getLiveDensity();
-        int sbHeight = 0;
+        int detected = 0;
 
-        // 1. Try canonical system dimen resource
-        try {
-            int resId = getResources().getIdentifier("status_bar_height", "dimen", "android");
-            if (resId > 0) {
-                sbHeight = getResources().getDimensionPixelSize(resId);
-            }
-        } catch (Throwable ignored) {}
-
-        // 2. Live WindowMetrics insets (Android 11+)
-        if (sbHeight <= 0 && Build.VERSION.SDK_INT >= Build.VERSION_CODES.R && mWindowManager != null) {
+        // 1. Live WindowMetrics insets (Android 11+)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R && mWindowManager != null) {
             try {
                 android.view.WindowMetrics wm = mWindowManager.getCurrentWindowMetrics();
-                android.graphics.Insets insets = wm.getWindowInsets().getInsetsIgnoringVisibility(
-                    android.view.WindowInsets.Type.statusBars()
-                );
-                if (insets != null && insets.top > 0) {
-                    sbHeight = insets.top;
+                if (wm != null && wm.getWindowInsets() != null) {
+                    android.graphics.Insets insets = wm.getWindowInsets().getInsetsIgnoringVisibility(
+                        android.view.WindowInsets.Type.statusBars()
+                    );
+                    if (insets != null && insets.top > 0) {
+                        detected = insets.top;
+                    }
+                    android.view.DisplayCutout cutout = wm.getWindowInsets().getDisplayCutout();
+                    if (cutout != null && cutout.getSafeInsetTop() > detected) {
+                        detected = cutout.getSafeInsetTop();
+                    }
                 }
             } catch (Throwable ignored) {}
         }
 
-        // Validate sbHeight against live density: standard status bar on Y70 / Edge 70 Max is ~32-38dp
-        float sbDp = density > 0 ? (sbHeight / density) : 0;
-        if (sbDp < 24f || sbDp > 56f || sbHeight <= 0) {
-            sbHeight = Math.round(34.0f * density);
+        // 2. DisplayCutout from Display (Android 9+)
+        if (detected <= 0 && Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q && mWindowManager != null) {
+            try {
+                android.view.Display display = mWindowManager.getDefaultDisplay();
+                if (display != null) {
+                    android.view.DisplayCutout cutout = display.getCutout();
+                    if (cutout != null && cutout.getSafeInsetTop() > 0) {
+                        detected = cutout.getSafeInsetTop();
+                    }
+                }
+            } catch (Throwable ignored) {}
         }
-        return sbHeight;
+
+        // 3. Root Window Insets if overlay root is already attached
+        if (detected <= 0 && mOverlayRoot != null) {
+            try {
+                android.view.WindowInsets rwi = mOverlayRoot.getRootWindowInsets();
+                if (rwi != null) {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                        android.graphics.Insets insets = rwi.getInsetsIgnoringVisibility(
+                            android.view.WindowInsets.Type.statusBars()
+                        );
+                        if (insets != null && insets.top > 0) {
+                            detected = insets.top;
+                        }
+                    }
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P && rwi.getDisplayCutout() != null) {
+                        int cutTop = rwi.getDisplayCutout().getSafeInsetTop();
+                        if (cutTop > detected) detected = cutTop;
+                    }
+                }
+            } catch (Throwable ignored) {}
+        }
+
+        // 4. Portrait status bar dimension resource
+        if (detected <= 0) {
+            try {
+                int resId = getResources().getIdentifier("status_bar_height_portrait", "dimen", "android");
+                if (resId <= 0) {
+                    resId = getResources().getIdentifier("status_bar_height", "dimen", "android");
+                }
+                if (resId > 0) {
+                    detected = getResources().getDimensionPixelSize(resId);
+                }
+            } catch (Throwable ignored) {}
+        }
+
+        // Validate sbHeight against live density:
+        // On Lenovo Legion Y70 / Motorola Edge 70 Max (centered punch hole),
+        // the status bar height is ~46dp (44dp - 48dp). At native 520 DPI (3.25 density) it is 150px (46.15dp).
+        // Any detected value < 40dp (like the legacy 24dp AOSP dimen) or > 56dp (like unscaled native 150px at density 2.0 = 75dp)
+        // is invalid.
+        float sbDp = density > 0 ? (detected / density) : 0;
+        if (detected <= 0 || sbDp < 40.0f || sbDp > 56.0f) {
+            return Math.round(46.0f * density);
+        }
+        return detected;
     }
 
     private int getClampedOverlayOffsetPx() {
@@ -623,9 +676,17 @@ public class NetworkSpeedService extends Service {
         if (mOverlayRoot == null || mOverlayParams == null || mWindowManager == null) return;
         try {
             int sbHeight = getStatusBarHeightPx();
+            if (mOverlayPill != null && mOverlayPill.getHeight() <= 0) {
+                mOverlayPill.measure(
+                    View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED),
+                    View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED)
+                );
+            }
             int pillHeightPx = (mOverlayPill != null && mOverlayPill.getHeight() > 0)
                 ? mOverlayPill.getHeight()
-                : dpToPx(20);
+                : ((mOverlayPill != null && mOverlayPill.getMeasuredHeight() > 0)
+                    ? mOverlayPill.getMeasuredHeight()
+                    : dpToPx(20));
             mOverlayParams.x = getClampedOverlayOffsetPx();
             mOverlayParams.y = Math.max(0, (sbHeight - pillHeightPx) / 2);
             mOverlayParams.width = WindowManager.LayoutParams.WRAP_CONTENT;
