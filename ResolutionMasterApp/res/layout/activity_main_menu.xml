@@ -4,33 +4,33 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/bg_dark"
-    android:fillViewport="true">
+    android:fitsSystemWindows="true">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="20dp">
+        android:padding="16dp">
 
-        <!-- App Header with Dynamic Privilege Status Button -->
+        <!-- Top Header Bar -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
             android:gravity="center_vertical"
-            android:layout_marginTop="8dp">
+            android:orientation="horizontal"
+            android:paddingBottom="4dp">
 
             <ImageView
-                android:layout_width="48dp"
-                android:layout_height="48dp"
+                android:layout_width="44dp"
+                android:layout_height="44dp"
                 android:src="@drawable/ic_launcher"
-                android:layout_marginEnd="14dp" />
+                android:contentDescription="App Logo" />
 
             <LinearLayout
-                android:layout_width="0dp"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                android:paddingStart="12dp">
 
                 <TextView
                     android:id="@+id/tv_app_title"
@@ -42,20 +42,33 @@
                     android:textStyle="bold" />
 
                 <TextView
+                    android:id="@+id/tv_app_version"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Legion Y70 &amp; Moto Edge 70 Max v3.0"
-                    android:textColor="@color/text_secondary"
-                    android:textSize="11sp"
-                    android:layout_marginTop="2dp" />
+                    android:textColor="@color/text_muted"
+                    android:textSize="11sp" />
             </LinearLayout>
+        </LinearLayout>
 
-            <TextView
+        <!-- Top Privilege Badge Button (Shizuku / Root) Centered Under Version -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="10dp">
+
+            <Button
                 android:id="@+id/btn_header_privilege"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="34dp"
+                android:minHeight="34dp"
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp"
                 android:background="@drawable/btn_badge_shizuku"
-                android:text="🛡️ Shizuku ✓"
+                android:text="🛡️ Shizuku: Проверка"
+                android:textAllCaps="false"
                 android:textColor="#FFFFFF"
                 android:textSize="11sp"
                 android:textStyle="bold"
@@ -69,7 +82,7 @@
             android:id="@+id/card_system_hud"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="14dp"
             android:background="@drawable/card_hud_bg"
             android:orientation="vertical"
             android:padding="14dp">
@@ -105,7 +118,7 @@
                         android:id="@+id/tv_menu_res"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="1080 × 2376"
+                        android:text="1440 × 3168"
                         android:textColor="@color/text_primary"
                         android:textSize="15sp"
                         android:textStyle="bold" />
@@ -114,7 +127,7 @@
                         android:id="@+id/tv_menu_dpi"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="390 DPI"
+                        android:text="520 DPI"
                         android:textColor="@color/accent_blue"
                         android:textSize="12sp" />
                 </LinearLayout>
@@ -162,7 +175,7 @@
                         android:id="@+id/tv_menu_touch_status"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Отклик тача: 0 (Сток)"
+                        android:text="Отклик тача: 50% (Сток)"
                         android:textColor="@color/accent_purple"
                         android:textSize="11sp"
                         android:layout_marginTop="2dp" />
@@ -192,7 +205,10 @@
                         android:id="@+id/tv_hud_oled"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="👁️ DC Dimming: Проверка..."
+                        android:drawableStart="@drawable/ic_cat_eyecare"
+                        android:drawablePadding="5dp"
+                        android:gravity="center_vertical"
+                        android:text="DC Dimming: Проверка..."
                         android:textColor="@color/accent_cyan"
                         android:textSize="11sp" />
 
@@ -200,7 +216,10 @@
                         android:id="@+id/tv_hud_aod"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="🌙 AOD: Выкл"
+                        android:drawableStart="@drawable/ic_cat_aod"
+                        android:drawablePadding="5dp"
+                        android:gravity="center_vertical"
+                        android:text="AOD: Выкл"
                         android:textColor="@color/accent_purple"
                         android:textSize="11sp"
                         android:layout_marginTop="3dp" />
@@ -216,7 +235,10 @@
                         android:id="@+id/tv_hud_power"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="🔋 Батарея: Проверка..."
+                        android:drawableStart="@drawable/ic_cat_power"
+                        android:drawablePadding="5dp"
+                        android:gravity="center_vertical"
+                        android:text="Батарея: Проверка..."
                         android:textColor="@color/accent_green"
                         android:textSize="11sp" />
 
@@ -224,7 +246,10 @@
                         android:id="@+id/tv_hud_nfc"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="💳 NFC: Проверка..."
+                        android:drawableStart="@drawable/ic_cat_nfc"
+                        android:drawablePadding="5dp"
+                        android:gravity="center_vertical"
+                        android:text="NFC: Проверка..."
                         android:textColor="@color/accent_blue"
                         android:textSize="11sp"
                         android:layout_marginTop="3dp" />
@@ -232,1227 +257,192 @@
             </LinearLayout>
         </LinearLayout>
 
-        <!-- Category Quick-Jump Bar (Horizontal) -->
-        <HorizontalScrollView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="14dp"
-            android:scrollbars="none"
-            android:overScrollMode="never">
-
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-
-                <Button
-                    android:id="@+id/chip_jump_display"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:minHeight="34dp"
-                    android:background="@drawable/btn_chip"
-                    android:text="📱 Экран"
-                    android:textAllCaps="false"
-                    android:textColor="@color/text_primary"
-                    android:textSize="11sp"
-                    android:paddingStart="10dp"
-                    android:paddingEnd="10dp"
-                    android:layout_marginEnd="5dp" />
-
-                <Button
-                    android:id="@+id/chip_jump_eyecare"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:minHeight="34dp"
-                    android:background="@drawable/btn_chip"
-                    android:text="👁️ Анти-ШИМ"
-                    android:textAllCaps="false"
-                    android:textColor="@color/text_primary"
-                    android:textSize="11sp"
-                    android:paddingStart="10dp"
-                    android:paddingEnd="10dp"
-                    android:layout_marginEnd="5dp" />
-
-                <Button
-                    android:id="@+id/chip_jump_aod"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:minHeight="34dp"
-                    android:background="@drawable/btn_chip"
-                    android:text="🌙 AOD"
-                    android:textAllCaps="false"
-                    android:textColor="@color/text_primary"
-                    android:textSize="11sp"
-                    android:paddingStart="10dp"
-                    android:paddingEnd="10dp"
-                    android:layout_marginEnd="5dp" />
-
-                <Button
-                    android:id="@+id/chip_jump_touch"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:minHeight="34dp"
-                    android:background="@drawable/btn_chip"
-                    android:text="⚡ 1500Hz Тач"
-                    android:textAllCaps="false"
-                    android:textColor="@color/text_primary"
-                    android:textSize="11sp"
-                    android:paddingStart="10dp"
-                    android:paddingEnd="10dp"
-                    android:layout_marginEnd="5dp" />
-
-                <Button
-                    android:id="@+id/chip_jump_power"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:minHeight="34dp"
-                    android:background="@drawable/btn_chip"
-                    android:text="🔋 Bypass"
-                    android:textAllCaps="false"
-                    android:textColor="@color/text_primary"
-                    android:textSize="11sp"
-                    android:paddingStart="10dp"
-                    android:paddingEnd="10dp"
-                    android:layout_marginEnd="5dp" />
-
-                <Button
-                    android:id="@+id/chip_jump_net"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:minHeight="34dp"
-                    android:background="@drawable/btn_chip"
-                    android:text="📶 Скорость"
-                    android:textAllCaps="false"
-                    android:textColor="@color/text_primary"
-                    android:textSize="11sp"
-                    android:paddingStart="10dp"
-                    android:paddingEnd="10dp"
-                    android:layout_marginEnd="5dp" />
-
-                <Button
-                    android:id="@+id/chip_jump_audio"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:minHeight="34dp"
-                    android:background="@drawable/btn_chip"
-                    android:text="🎵 Звук"
-                    android:textAllCaps="false"
-                    android:textColor="@color/text_primary"
-                    android:textSize="11sp"
-                    android:paddingStart="10dp"
-                    android:paddingEnd="10dp"
-                    android:layout_marginEnd="5dp" />
-
-                <Button
-                    android:id="@+id/chip_jump_debloat"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:minHeight="34dp"
-                    android:background="@drawable/btn_chip"
-                    android:text="🧹 Debloater"
-                    android:textAllCaps="false"
-                    android:textColor="@color/text_primary"
-                    android:textSize="11sp"
-                    android:paddingStart="10dp"
-                    android:paddingEnd="10dp"
-                    android:layout_marginEnd="5dp" />
-
-                <Button
-                    android:id="@+id/chip_jump_nfc"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:minHeight="34dp"
-                    android:background="@drawable/btn_chip"
-                    android:text="💳 NFC Fix"
-                    android:textAllCaps="false"
-                    android:textColor="@color/text_primary"
-                    android:textSize="11sp"
-                    android:paddingStart="10dp"
-                    android:paddingEnd="10dp" />
-            </LinearLayout>
-        </HorizontalScrollView>
-
-
-        <!-- Menu Section Header -->
+        <!-- Section Header -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
-            android:text="РАЗДЕЛЫ НАСТРОЕК"
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="10dp"
+            android:text="⚡ РАЗДЕЛЫ НАСТРОЕК"
             android:textColor="@color/text_muted"
-            android:textSize="12sp"
+            android:textSize="11sp"
             android:textStyle="bold" />
 
-        <!-- Card 1: Настройки дисплея -->
+        <!-- 1. Display & Resolution Card -->
         <LinearLayout
-            android:id="@+id/card_nav_display"
+            android:id="@+id/card_menu_display"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
+            android:layout_marginBottom="8dp"
             android:background="@drawable/card_bg"
-            android:orientation="vertical"
-            android:padding="16dp">
+            android:clickable="true"
+            android:focusable="true"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:padding="14dp">
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:gravity="center_vertical">
-
-                <ImageView
-                    android:layout_width="22dp"
-                    android:layout_height="22dp"
-                    android:src="@drawable/ic_cat_display"
-                    android:layout_marginEnd="8dp" />
-
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="Настройки дисплея"
-                    android:textColor="@color/text_primary"
-                    android:textSize="17sp"
-                    android:textStyle="bold" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:background="@drawable/btn_chip"
-                    android:paddingStart="8dp"
-                    android:paddingEnd="8dp"
-                    android:paddingTop="3dp"
-                    android:paddingBottom="3dp"
-                    android:text="144Hz • 2K/FHD+"
-                    android:textColor="@color/accent_blue"
-                    android:textSize="11sp"
-                    android:textStyle="bold" />
-            </LinearLayout>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:text="• Разрешение: FHD+ (1080p), QHD+ (1440p), HD+ (720p)\n• Герцовка: 144 Гц (разгон тача до пиковых 1500 Гц), 120, 90, 60 Гц\n• Защитный 15-секундный таймер отката\n• Переключение из шторки быстрых настроек"
-                android:textColor="@color/text_secondary"
-                android:textSize="13sp"
-                android:lineSpacingExtra="3dp" />
-
-            <Button
-                android:id="@+id/btn_open_display"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                    android:minHeight="48dp"
-                    android:gravity="center"
-                    android:paddingStart="10dp"
-                    android:paddingEnd="10dp"
-                    android:paddingTop="8dp"
-                    android:paddingBottom="8dp"
-                android:layout_marginTop="14dp"
-                android:background="@drawable/btn_primary"
-                android:text="Открыть настройки дисплея →"
-                android:textAllCaps="false"
-                android:textColor="#FFFFFF"
-                android:textSize="14sp"
-                android:textStyle="bold" />
-        </LinearLayout>
-
-        <!-- Card: Управление откликом сенсора и тача -->
-        <LinearLayout
-            android:id="@+id/card_touch_control"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:background="@drawable/card_bg"
-            android:orientation="vertical"
-            android:padding="16dp">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:gravity="center_vertical">
-
-                <ImageView
-                    android:layout_width="22dp"
-                    android:layout_height="22dp"
-                    android:src="@drawable/ic_cat_touch"
-                    android:layout_marginEnd="8dp" />
-
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="Отклик сенсора и Турбо-режим"
-                    android:textColor="@color/text_primary"
-                    android:textSize="17sp"
-                    android:textStyle="bold" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:background="@drawable/btn_chip"
-                    android:paddingStart="8dp"
-                    android:paddingEnd="8dp"
-                    android:paddingTop="3dp"
-                    android:paddingBottom="3dp"
-                    android:text="Goodix 1500Hz"
-                    android:textColor="@color/accent_purple"
-                    android:textSize="11sp"
-                    android:textStyle="bold" />
-            </LinearLayout>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:text="• Аппаратный опрос сенсора Goodix: базовые 480–720 Гц при ведении пальца и пиковые 1500 Гц при касаниях и выстрелах (на 144 Гц)\n• Что меняет ползунок: системный фильтр сглаживания и скорость считывания касаний Android\n• Кнопка «Турбо-режим» в 1 клик включает 144 Гц экрана, активирует 1500 Гц сенсора и ставит максимум чувствительности 100%"
-                android:textColor="@color/text_secondary"
-                android:textSize="13sp"
-                android:lineSpacingExtra="3dp" />
-
-            <!-- Slider Container -->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:layout_marginTop="12dp"
-                android:background="#151921"
-                android:padding="12dp">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal">
-
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="Чувствительность отклика:"
-                        android:textColor="@color/text_muted"
-                        android:textSize="12sp" />
-
-                    <TextView
-                        android:id="@+id/tv_menu_touch_speed_val"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="50% — Сток (Сглаживание дрожания ⚖️)"
-                        android:textColor="@color/accent_purple"
-                        android:textSize="13sp"
-                        android:textStyle="bold" />
-                </LinearLayout>
-
-                <SeekBar
-                    android:id="@+id/sb_menu_touch_speed"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:max="14"
-                    android:progress="7" />
-
-                <!-- Preset Chips -->
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:layout_marginTop="6dp">
-
-                    <Button
-                        android:id="@+id/btn_menu_touch_stock"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                    android:minHeight="30dp"
-                    android:gravity="center"
-                    android:paddingStart="6dp"
-                    android:paddingEnd="6dp"
-                    android:paddingTop="4dp"
-                    android:paddingBottom="4dp"
-                        android:layout_weight="1"
-                        android:background="@drawable/btn_chip"
-                        android:text="⚖️ Сток (50%)"
-                        android:textAllCaps="false"
-                        android:textColor="@color/text_secondary"
-                        android:textSize="11sp"
-                        android:layout_marginEnd="4dp" />
-
-                    <Button
-                        android:id="@+id/btn_menu_touch_game"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                    android:minHeight="30dp"
-                    android:gravity="center"
-                    android:paddingStart="6dp"
-                    android:paddingEnd="6dp"
-                    android:paddingTop="4dp"
-                    android:paddingBottom="4dp"
-                        android:layout_weight="1"
-                        android:background="@drawable/btn_chip"
-                        android:text="🎮 Игра (85%)"
-                        android:textAllCaps="false"
-                        android:textColor="@color/text_secondary"
-                        android:textSize="11sp"
-                        android:layout_marginEnd="4dp" />
-
-                    <Button
-                        android:id="@+id/btn_menu_touch_turbo"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                    android:minHeight="30dp"
-                    android:gravity="center"
-                    android:paddingStart="6dp"
-                    android:paddingEnd="6dp"
-                    android:paddingTop="4dp"
-                    android:paddingBottom="4dp"
-                        android:layout_weight="1"
-                        android:background="@drawable/btn_chip"
-                        android:text="⚡ Турбо (100%)"
-                        android:textAllCaps="false"
-                        android:textColor="@color/accent_purple"
-                        android:textSize="11sp" />
-                </LinearLayout>
-
-                <!-- Detailed Explanation of Levels -->
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
-                    android:background="#0D1117"
-                    android:padding="8dp"
-                    android:text="• 50% (Сток): система сглаживает естественное микро-дрожание рук для плавности в интерфейсе\n• 85% (Игра): сниженная задержка ввода, быстрый разворот прицела\n• 100% (Турбо): фильтр задержки отключен (0 мс), прямое считывание для мгновенной стрельбы"
-                    android:textColor="@color/text_muted"
-                    android:textSize="11sp"
-                    android:lineSpacingExtra="3dp" />
-            </LinearLayout>
-
-            <!-- Master Action Buttons -->
-            <Button
-                android:id="@+id/btn_menu_apply_turbo"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                    android:minHeight="48dp"
-                    android:gravity="center"
-                    android:paddingStart="10dp"
-                    android:paddingEnd="10dp"
-                    android:paddingTop="8dp"
-                    android:paddingBottom="8dp"
-                android:layout_marginTop="12dp"
-                android:background="@drawable/btn_purple"
-                android:text="⚡ Включить Турбо-режим (144 Гц + Сенсор 1500 Гц)"
-                android:textAllCaps="false"
-                android:textColor="#FFFFFF"
-                android:textSize="13sp"
-                android:textStyle="bold" />
-
-            <Button
-                android:id="@+id/btn_menu_reset_stock"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                    android:minHeight="42dp"
-                    android:gravity="center"
-                    android:paddingStart="10dp"
-                    android:paddingEnd="10dp"
-                    android:paddingTop="8dp"
-                    android:paddingBottom="8dp"
-                android:layout_marginTop="8dp"
+            <ImageView
+                android:layout_width="40dp"
+                android:layout_height="40dp"
                 android:background="@drawable/btn_chip"
-                android:text="🔄 Сбросить к стоку (Авто Гц + Сток 50% + UI 1.0x)"
-                android:textAllCaps="false"
-                android:textColor="@color/accent_yellow"
-                android:textSize="12sp"
-                android:textStyle="bold" />
+                android:padding="9dp"
+                android:src="@drawable/ic_cat_display" />
 
-            <!-- UI Animation Latency Section -->
             <LinearLayout
-                android:layout_width="match_parent"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:layout_marginTop="12dp"
-                android:background="#151921"
-                android:padding="10dp">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal">
-
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="Скорость анимаций UI:"
-                        android:textColor="@color/text_muted"
-                        android:textSize="12sp" />
-
-                    <TextView
-                        android:id="@+id/tv_menu_anim_speed_val"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="1.0x (Сток ⚖️)"
-                        android:textColor="@color/accent_blue"
-                        android:textSize="12sp"
-                        android:textStyle="bold" />
-                </LinearLayout>
+                android:layout_marginStart="14dp"
+                android:layout_weight="1"
+                android:orientation="vertical">
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="4dp"
-                    android:text="Ускорение анимаций в 2 раза (0.5x) убирает визуальные задержки системы."
-                    android:textColor="@color/text_secondary"
-                    android:textSize="11sp" />
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:layout_marginTop="8dp">
-
-                    <Button
-                        android:id="@+id/btn_menu_anim_boost"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                    android:minHeight="36dp"
-                    android:gravity="center"
-                    android:paddingStart="10dp"
-                    android:paddingEnd="10dp"
-                    android:paddingTop="8dp"
-                    android:paddingBottom="8dp"
-                        android:layout_weight="1"
-                        android:background="@drawable/btn_primary"
-                        android:text="🚀 Ускорить UI (0.5x)"
-                        android:textAllCaps="false"
-                        android:textColor="#FFFFFF"
-                        android:textSize="12sp"
-                        android:textStyle="bold"
-                        android:layout_marginEnd="4dp" />
-
-                    <Button
-                        android:id="@+id/btn_menu_anim_stock"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                    android:minHeight="36dp"
-                    android:gravity="center"
-                    android:paddingStart="10dp"
-                    android:paddingEnd="10dp"
-                    android:paddingTop="8dp"
-                    android:paddingBottom="8dp"
-                        android:layout_weight="1"
-                        android:background="@drawable/btn_chip"
-                        android:text="🔄 Сток (1.0x)"
-                        android:textAllCaps="false"
-                        android:textColor="@color/text_primary"
-                        android:textSize="12sp"
-                        android:layout_marginStart="4dp" />
-                </LinearLayout>
-            </LinearLayout>
-        </LinearLayout>
-
-        <!-- Card: Защита глаз и экранные твики (DC Dimming / Анти-ШИМ) -->
-        <LinearLayout
-            android:id="@+id/card_eye_care"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:background="@drawable/card_bg"
-            android:orientation="vertical"
-            android:padding="16dp">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:gravity="center_vertical">
-
-                <ImageView
-                    android:layout_width="22dp"
-                    android:layout_height="22dp"
-                    android:src="@drawable/ic_cat_eyecare"
-                    android:layout_marginEnd="8dp" />
-
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="Защита глаз и экран (OLED)"
+                    android:text="Экран и Разрешение"
                     android:textColor="@color/text_primary"
-                    android:textSize="17sp"
+                    android:textSize="15sp"
                     android:textStyle="bold" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:background="@drawable/btn_chip"
-                    android:paddingStart="8dp"
-                    android:paddingEnd="8dp"
-                    android:paddingTop="3dp"
-                    android:paddingBottom="3dp"
-                    android:text="DC Dimming • ШИМ"
-                    android:textColor="@color/accent_blue"
-                    android:textSize="11sp"
-                    android:textStyle="bold" />
-            </LinearLayout>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:text="• Аппаратный DC Dimming (Анти-ШИМ): устраняет мерцание OLED-матрицы на низкой яркости, снижает нагрузку на зрение\n• Ночной режим: фильтрация синего спектра для комфорта в темноте\n• Экстра-затемнение: снижение яркости ниже системного порога"
-                android:textColor="@color/text_secondary"
-                android:textSize="13sp"
-                android:lineSpacingExtra="3dp" />
-
-            <Button
-                android:id="@+id/btn_toggle_dc_dimming"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                    android:minHeight="46dp"
-                    android:gravity="center"
-                    android:paddingStart="10dp"
-                    android:paddingEnd="10dp"
-                    android:paddingTop="8dp"
-                    android:paddingBottom="8dp"
-                android:layout_marginTop="12dp"
-                android:background="@drawable/btn_primary"
-                android:text="👁️ DC Dimming (Анти-ШИМ): Включить"
-                android:textAllCaps="false"
-                android:textColor="#FFFFFF"
-                android:textSize="13sp"
-                android:textStyle="bold" />
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_marginTop="8dp">
-
-                <Button
-                    android:id="@+id/btn_toggle_night_light"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:minHeight="40dp"
-                    android:gravity="center"
-                    android:paddingStart="10dp"
-                    android:paddingEnd="10dp"
-                    android:paddingTop="8dp"
-                    android:paddingBottom="8dp"
-                    android:layout_weight="1"
-                    android:background="@drawable/btn_chip"
-                    android:text="🌙 Ночной режим: Выкл"
-                    android:textAllCaps="false"
-                    android:textColor="@color/text_primary"
-                    android:textSize="12sp"
-                    android:layout_marginEnd="4dp" />
-
-                <Button
-                    android:id="@+id/btn_toggle_extra_dim"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:minHeight="40dp"
-                    android:gravity="center"
-                    android:paddingStart="10dp"
-                    android:paddingEnd="10dp"
-                    android:paddingTop="8dp"
-                    android:paddingBottom="8dp"
-                    android:layout_weight="1"
-                    android:background="@drawable/btn_chip"
-                    android:text="🌑 Экстра-затемнение: Выкл"
-                    android:textAllCaps="false"
-                    android:textColor="@color/text_primary"
-                    android:textSize="12sp"
-                    android:layout_marginStart="4dp" />
-            </LinearLayout>
-
-            <!-- Anti-Black Smearing Submenu Toggle Button -->
-            <Button
-                android:id="@+id/btn_toggle_smearing_menu"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                    android:minHeight="44dp"
-                    android:gravity="center"
-                    android:paddingStart="10dp"
-                    android:paddingEnd="10dp"
-                    android:paddingTop="8dp"
-                    android:paddingBottom="8dp"
-                android:layout_marginTop="10dp"
-                android:background="@drawable/btn_chip"
-                android:text="🌑 Анти-шлейф чёрного (Anti-Black Smearing)  ▼"
-                android:textAllCaps="false"
-                android:textColor="@color/accent_purple"
-                android:textSize="12sp"
-                android:textStyle="bold" />
-
-            <!-- Collapsible Anti-Black Smearing Submenu -->
-            <LinearLayout
-                android:id="@+id/layout_smearing_submenu"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:background="#151921"
-                android:orientation="vertical"
-                android:padding="12dp"
-                android:visibility="gone">
-
-                <!-- Method 1: OLED Black Floor Lift -->
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:gravity="center_vertical">
-
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="1. Подъём уровня чёрного (Black Floor)"
-                        android:textColor="@color/text_primary"
-                        android:textSize="13sp"
-                        android:textStyle="bold" />
-
-                    <TextView
-                        android:id="@+id/tv_black_floor_val"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Выкл (#000000)"
-                        android:textColor="@color/accent_purple"
-                        android:textSize="11sp"
-                        android:textStyle="bold" />
-                </LinearLayout>
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="4dp"
-                    android:text="Смещение чёрного #000000 → #030303–#060606 через SurfaceFlinger (ColorMatrix с Root или HWC-слой без Root). Пиксели OLED остаются предзаряженными — шлейф текста исчезает."
+                    android:layout_marginTop="2dp"
+                    android:text="QHD+ / FHD+ / HD+, герцовка 144 Гц, DPI и таймеры"
                     android:textColor="@color/text_secondary"
-                    android:textSize="11sp"
-                    android:lineSpacingExtra="2dp" />
-
-                <SeekBar
-                    android:id="@+id/sb_black_floor_level"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="6dp"
-                    android:max="8"
-                    android:progress="4" />
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:layout_marginTop="4dp">
-
-                    <Button
-                        android:id="@+id/btn_bf_low"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                    android:minHeight="30dp"
-                    android:gravity="center"
-                    android:paddingStart="6dp"
-                    android:paddingEnd="6dp"
-                    android:paddingTop="4dp"
-                    android:paddingBottom="4dp"
-                        android:layout_weight="1"
-                        android:background="@drawable/btn_chip"
-                        android:text="#030303 (+1.2%)"
-                        android:textAllCaps="false"
-                        android:textColor="@color/text_secondary"
-                        android:textSize="10sp"
-                        android:layout_marginEnd="4dp" />
-
-                    <Button
-                        android:id="@+id/btn_bf_med"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                    android:minHeight="30dp"
-                    android:gravity="center"
-                    android:paddingStart="6dp"
-                    android:paddingEnd="6dp"
-                    android:paddingTop="4dp"
-                    android:paddingBottom="4dp"
-                        android:layout_weight="1"
-                        android:background="@drawable/btn_chip"
-                        android:text="#040404 (+1.6%)"
-                        android:textAllCaps="false"
-                        android:textColor="@color/accent_purple"
-                        android:textSize="10sp"
-                        android:layout_marginEnd="4dp" />
-
-                    <Button
-                        android:id="@+id/btn_bf_high"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                    android:minHeight="30dp"
-                    android:gravity="center"
-                    android:paddingStart="6dp"
-                    android:paddingEnd="6dp"
-                    android:paddingTop="4dp"
-                    android:paddingBottom="4dp"
-                        android:layout_weight="1"
-                        android:background="@drawable/btn_chip"
-                        android:text="#060606 (+2.4%)"
-                        android:textAllCaps="false"
-                        android:textColor="@color/text_secondary"
-                        android:textSize="10sp" />
-                </LinearLayout>
-
-                <Button
-                    android:id="@+id/btn_black_floor_toggle"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:minHeight="40dp"
-                    android:gravity="center"
-                    android:paddingStart="10dp"
-                    android:paddingEnd="10dp"
-                    android:paddingTop="8dp"
-                    android:paddingBottom="8dp"
-                    android:layout_marginTop="8dp"
-                    android:background="@drawable/btn_purple"
-                    android:text="✨ Включить подъём чёрного (#040404)"
-                    android:textAllCaps="false"
-                    android:textColor="#FFFFFF"
-                    android:textSize="12sp"
-                    android:textStyle="bold" />
-
-                <!-- Divider -->
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:layout_marginTop="12dp"
-                    android:layout_marginBottom="10dp"
-                    android:background="@color/card_stroke" />
-
-                <!-- Method 2: High Matrix Brightness + Extra Dim Combo -->
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="2. Связка «Яркость матрицы 25–35% + Extra Dim»"
-                    android:textColor="@color/text_primary"
-                    android:textSize="13sp"
-                    android:textStyle="bold" />
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="4dp"
-                    android:text="Держит аппаратное напряжение OLED выше (без смазывания), а итоговую яркость мягко гасит вниз через Extra Dim."
-                    android:textColor="@color/text_secondary"
-                    android:textSize="11sp"
-                    android:lineSpacingExtra="2dp" />
-
-                <Button
-                    android:id="@+id/btn_smearing_combo"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:minHeight="40dp"
-                    android:gravity="center"
-                    android:paddingStart="10dp"
-                    android:paddingEnd="10dp"
-                    android:paddingTop="8dp"
-                    android:paddingBottom="8dp"
-                    android:layout_marginTop="8dp"
-                    android:background="@drawable/btn_primary"
-                    android:text="💡 Включить связку (Яркость 30% + Extra Dim)"
-                    android:textAllCaps="false"
-                    android:textColor="#FFFFFF"
-                    android:textSize="12sp"
-                    android:textStyle="bold" />
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:layout_marginTop="8dp">
-
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="Интенсивность Extra Dim:"
-                        android:textColor="@color/text_muted"
-                        android:textSize="11sp" />
-
-                    <TextView
-                        android:id="@+id/tv_extra_dim_level_val"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="50%"
-                        android:textColor="@color/accent_blue"
-                        android:textSize="12sp"
-                        android:textStyle="bold" />
-                </LinearLayout>
-
-                <SeekBar
-                    android:id="@+id/sb_extra_dim_level"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="4dp"
-                    android:max="100"
-                    android:progress="50" />
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:layout_marginTop="4dp">
-
-                    <Button
-                        android:id="@+id/btn_bright_25"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                    android:minHeight="30dp"
-                    android:gravity="center"
-                    android:paddingStart="6dp"
-                    android:paddingEnd="6dp"
-                    android:paddingTop="4dp"
-                    android:paddingBottom="4dp"
-                        android:layout_weight="1"
-                        android:background="@drawable/btn_chip"
-                        android:text="☀️ Яркость 25%"
-                        android:textAllCaps="false"
-                        android:textColor="@color/text_secondary"
-                        android:textSize="10sp"
-                        android:layout_marginEnd="4dp" />
-
-                    <Button
-                        android:id="@+id/btn_bright_30"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                    android:minHeight="30dp"
-                    android:gravity="center"
-                    android:paddingStart="6dp"
-                    android:paddingEnd="6dp"
-                    android:paddingTop="4dp"
-                    android:paddingBottom="4dp"
-                        android:layout_weight="1"
-                        android:background="@drawable/btn_chip"
-                        android:text="☀️ Яркость 30%"
-                        android:textAllCaps="false"
-                        android:textColor="@color/accent_blue"
-                        android:textSize="10sp"
-                        android:layout_marginEnd="4dp" />
-
-                    <Button
-                        android:id="@+id/btn_bright_35"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                    android:minHeight="30dp"
-                    android:gravity="center"
-                    android:paddingStart="6dp"
-                    android:paddingEnd="6dp"
-                    android:paddingTop="4dp"
-                    android:paddingBottom="4dp"
-                        android:layout_weight="1"
-                        android:background="@drawable/btn_chip"
-                        android:text="☀️ Яркость 35%"
-                        android:textAllCaps="false"
-                        android:textColor="@color/text_secondary"
-                        android:textSize="10sp" />
-                </LinearLayout>
-
-                <!-- Divider -->
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:layout_marginTop="12dp"
-                    android:layout_marginBottom="10dp"
-                    android:background="@color/card_stroke" />
-
-                <!-- Method 3: 120 / 144 Hz + DC Dimming Gamma Tables -->
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="3. Фиксация 120 / 144 Гц + DC Dimming"
-                    android:textColor="@color/text_primary"
-                    android:textSize="13sp"
-                    android:textStyle="bold" />
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="4dp"
-                    android:text="На 120/144 Гц и при переключении DC Dimming драйвер панели меняет гамма-таблицы — подберите режим с минимальным шлейфом."
-                    android:textColor="@color/text_secondary"
-                    android:textSize="11sp"
-                    android:lineSpacingExtra="2dp" />
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:layout_marginTop="8dp">
-
-                    <Button
-                        android:id="@+id/btn_smearing_120hz"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                    android:minHeight="36dp"
-                    android:gravity="center"
-                    android:paddingStart="10dp"
-                    android:paddingEnd="10dp"
-                    android:paddingTop="8dp"
-                    android:paddingBottom="8dp"
-                        android:layout_weight="1"
-                        android:background="@drawable/btn_chip"
-                        android:text="120 Гц"
-                        android:textAllCaps="false"
-                        android:textColor="@color/text_primary"
-                        android:textSize="11sp"
-                        android:textStyle="bold"
-                        android:layout_marginEnd="4dp" />
-
-                    <Button
-                        android:id="@+id/btn_smearing_144hz"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                    android:minHeight="36dp"
-                    android:gravity="center"
-                    android:paddingStart="10dp"
-                    android:paddingEnd="10dp"
-                    android:paddingTop="8dp"
-                    android:paddingBottom="8dp"
-                        android:layout_weight="1"
-                        android:background="@drawable/btn_chip"
-                        android:text="144 Гц"
-                        android:textAllCaps="false"
-                        android:textColor="@color/text_primary"
-                        android:textSize="11sp"
-                        android:textStyle="bold"
-                        android:layout_marginEnd="4dp" />
-
-                    <Button
-                        android:id="@+id/btn_smearing_dc"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                    android:minHeight="36dp"
-                    android:gravity="center"
-                    android:paddingStart="10dp"
-                    android:paddingEnd="10dp"
-                    android:paddingTop="8dp"
-                    android:paddingBottom="8dp"
-                        android:layout_weight="1.3"
-                        android:background="@drawable/btn_chip"
-                        android:text="DC Dim: Выкл"
-                        android:textAllCaps="false"
-                        android:textColor="@color/text_primary"
-                        android:textSize="11sp"
-                        android:textStyle="bold" />
-                </LinearLayout>
-            </LinearLayout>
-        </LinearLayout>
-
-        <!-- Card: Умное затухание AOD (Always On Display) -->
-        <LinearLayout
-            android:id="@+id/card_aod_control"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:background="@drawable/card_bg"
-            android:orientation="vertical"
-            android:padding="16dp">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:gravity="center_vertical">
-
-                <ImageView
-                    android:layout_width="22dp"
-                    android:layout_height="22dp"
-                    android:src="@drawable/ic_cat_aod"
-                    android:layout_marginEnd="8dp" />
-
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="Умное затухание AOD"
-                    android:textColor="@color/accent_purple"
-                    android:textSize="14sp"
-                    android:textStyle="bold" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:background="@drawable/btn_chip"
-                    android:paddingStart="8dp"
-                    android:paddingEnd="8dp"
-                    android:paddingTop="3dp"
-                    android:paddingBottom="3dp"
-                    android:text="OLED Защита"
-                    android:textColor="@color/accent_purple"
-                    android:textSize="10sp"
-                    android:textStyle="bold" />
-            </LinearLayout>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:text="• Показывает часы и уведомления при блокировке, а через выбранное время плавно гасит Always On Display (doze_always_on 0)\n• Предотвращает выгорание OLED-матрицы в зоне статических часов\n• Экономит до 15–20% заряда аккумулятора за день\n• При пробуждении или касании AOD моментально восстанавливается"
-                android:textColor="@color/text_secondary"
-                android:textSize="12sp"
-                android:lineSpacingExtra="2dp" />
-
-            <Button
-                android:id="@+id/btn_toggle_aod_timeout"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:minHeight="44dp"
-                android:layout_marginTop="12dp"
-                android:background="@drawable/btn_primary"
-                android:text="🌙 Включить умное затухание AOD"
-                android:textAllCaps="false"
-                android:textColor="#FFFFFF"
-                android:textSize="13sp"
-                android:textStyle="bold" />
-
-            <LinearLayout
-                android:id="@+id/layout_aod_settings"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:layout_marginTop="10dp"
-                android:visibility="gone">
-
-                <TextView
-                    android:id="@+id/tv_aod_timeout_val"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Время до затухания: 15 сек (Рекомендуемое)"
-                    android:textColor="@color/accent_cyan"
-                    android:textSize="12sp"
-                    android:textStyle="bold" />
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:layout_marginTop="6dp">
-
-                    <Button
-                        android:id="@+id/btn_aod_5s"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:minHeight="36dp"
-                        android:layout_weight="1"
-                        android:background="@drawable/btn_chip"
-                        android:text="5 сек"
-                        android:textAllCaps="false"
-                        android:textColor="@color/text_primary"
-                        android:textSize="11sp"
-                        android:layout_marginEnd="2dp" />
-
-                    <Button
-                        android:id="@+id/btn_aod_10s"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:minHeight="36dp"
-                        android:layout_weight="1"
-                        android:background="@drawable/btn_chip"
-                        android:text="10 сек"
-                        android:textAllCaps="false"
-                        android:textColor="@color/text_primary"
-                        android:textSize="11sp"
-                        android:layout_marginStart="2dp"
-                        android:layout_marginEnd="2dp" />
-
-                    <Button
-                        android:id="@+id/btn_aod_15s"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:minHeight="36dp"
-                        android:layout_weight="1"
-                        android:background="@drawable/btn_primary"
-                        android:text="15 сек"
-                        android:textAllCaps="false"
-                        android:textColor="#FFFFFF"
-                        android:textSize="11sp"
-                        android:layout_marginStart="2dp"
-                        android:layout_marginEnd="2dp" />
-
-                    <Button
-                        android:id="@+id/btn_aod_30s"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:minHeight="36dp"
-                        android:layout_weight="1"
-                        android:background="@drawable/btn_chip"
-                        android:text="30 сек"
-                        android:textAllCaps="false"
-                        android:textColor="@color/text_primary"
-                        android:textSize="11sp"
-                        android:layout_marginStart="2dp"
-                        android:layout_marginEnd="2dp" />
-
-                    <Button
-                        android:id="@+id/btn_aod_60s"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:minHeight="36dp"
-                        android:layout_weight="1"
-                        android:background="@drawable/btn_chip"
-                        android:text="60 сек"
-                        android:textAllCaps="false"
-                        android:textColor="@color/text_primary"
-                        android:textSize="11sp"
-                        android:layout_marginStart="2dp" />
-                </LinearLayout>
-
-                <Button
-                    android:id="@+id/btn_aod_keep_charging"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:minHeight="40dp"
-                    android:layout_marginTop="8dp"
-                    android:background="@drawable/btn_chip"
-                    android:text="⚡ Не гасить AOD при подключённой зарядке: ВКЛ ✓"
-                    android:textAllCaps="false"
-                    android:textColor="@color/text_primary"
                     android:textSize="12sp" />
-            </LinearLayout>
-        </LinearLayout>
-
-        <!-- Card: Звук и Bluetooth (Audio Control) -->
-        <LinearLayout
-            android:id="@+id/card_audio_control"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:background="@drawable/card_bg"
-            android:orientation="vertical"
-            android:padding="16dp">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:gravity="center_vertical">
-
-                <ImageView
-                    android:layout_width="22dp"
-                    android:layout_height="22dp"
-                    android:src="@drawable/ic_cat_audio"
-                    android:layout_marginEnd="8dp" />
 
                 <TextView
-                    android:layout_width="0dp"
+                    android:id="@+id/tv_sub_display"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="Звук и Bluetooth"
+                    android:layout_marginTop="3dp"
+                    android:text="1440 × 3168 • 520 DPI • 144 Гц"
+                    android:textColor="@color/accent_blue"
+                    android:textSize="11sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:text="›"
+                android:textColor="@color/text_muted"
+                android:textSize="22sp" />
+        </LinearLayout>
+
+        <!-- 2. Eye Care (DC Dimming) Card -->
+        <LinearLayout
+            android:id="@+id/card_menu_eyecare"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:background="@drawable/card_bg"
+            android:clickable="true"
+            android:focusable="true"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:padding="14dp">
+
+            <ImageView
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:background="@drawable/btn_chip"
+                android:padding="9dp"
+                android:src="@drawable/ic_cat_eyecare" />
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="14dp"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Защита зрения (Анти-ШИМ)"
                     android:textColor="@color/text_primary"
-                    android:textSize="17sp"
+                    android:textSize="15sp"
                     android:textStyle="bold" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:background="@drawable/btn_chip"
-                    android:paddingStart="8dp"
-                    android:paddingEnd="8dp"
-                    android:paddingTop="3dp"
-                    android:paddingBottom="3dp"
-                    android:text="Dolby • Multi-Volume"
+                    android:layout_marginTop="2dp"
+                    android:text="Аппаратный DC Dimming, Ночной режим, Extra Dim"
+                    android:textColor="@color/text_secondary"
+                    android:textSize="12sp" />
+
+                <TextView
+                    android:id="@+id/tv_sub_eyecare"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="3dp"
+                    android:text="DC Dimming: Выкл"
+                    android:textColor="@color/accent_cyan"
+                    android:textSize="11sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:text="›"
+                android:textColor="@color/text_muted"
+                android:textSize="22sp" />
+        </LinearLayout>
+
+        <!-- 3. Always On Display Card -->
+        <LinearLayout
+            android:id="@+id/card_menu_aod"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:background="@drawable/card_bg"
+            android:clickable="true"
+            android:focusable="true"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:padding="14dp">
+
+            <ImageView
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:background="@drawable/btn_chip"
+                android:padding="9dp"
+                android:src="@drawable/ic_cat_aod" />
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="14dp"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Умный Always On Display"
+                    android:textColor="@color/text_primary"
+                    android:textSize="15sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="2dp"
+                    android:text="Плавное затухание AOD (5–60с), защита OLED"
+                    android:textColor="@color/text_secondary"
+                    android:textSize="12sp" />
+
+                <TextView
+                    android:id="@+id/tv_sub_aod"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="3dp"
+                    android:text="AOD: 15 сек ✓"
                     android:textColor="@color/accent_purple"
                     android:textSize="11sp"
                     android:textStyle="bold" />
@@ -1461,184 +451,124 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:text="• Раздельная громкость BT (Disable Absolute Volume): отвязка громкости телефона от наушников/колонок (решает проблему тихого звука)\n• Обход лимита громкости: отключение всплывающего предупреждения и принудительного занижения уровня звука\n• Доступ к расширенному микшеру и эффектам Dolby Atmos"
-                android:textColor="@color/text_secondary"
-                android:textSize="13sp"
-                android:lineSpacingExtra="3dp" />
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_marginTop="12dp">
-
-                <Button
-                    android:id="@+id/btn_audio_bt_abs_vol"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:minHeight="44dp"
-                    android:gravity="center"
-                    android:paddingStart="10dp"
-                    android:paddingEnd="10dp"
-                    android:paddingTop="8dp"
-                    android:paddingBottom="8dp"
-                    android:layout_weight="1"
-                    android:background="@drawable/btn_chip"
-                    android:text="🎧 Раздельная BT: Выкл"
-                    android:textAllCaps="false"
-                    android:textColor="@color/text_primary"
-                    android:textSize="11sp"
-                    android:textStyle="bold"
-                    android:layout_marginEnd="4dp" />
-
-                <Button
-                    android:id="@+id/btn_audio_safe_vol"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:minHeight="44dp"
-                    android:gravity="center"
-                    android:paddingStart="10dp"
-                    android:paddingEnd="10dp"
-                    android:paddingTop="8dp"
-                    android:paddingBottom="8dp"
-                    android:layout_weight="1"
-                    android:background="@drawable/btn_chip"
-                    android:text="🛡️ Обход лимита: Выкл"
-                    android:textAllCaps="false"
-                    android:textColor="@color/text_primary"
-                    android:textSize="11sp"
-                    android:textStyle="bold"
-                    android:layout_marginStart="4dp" />
-            </LinearLayout>
-
-            <!-- Media Volume Slider Container -->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:layout_marginTop="10dp"
-                android:background="#151921"
-                android:padding="12dp">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal">
-
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="Громкость мультимедиа:"
-                        android:textColor="@color/text_muted"
-                        android:textSize="12sp" />
-
-                    <TextView
-                        android:id="@+id/tv_media_volume_val"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="50%"
-                        android:textColor="@color/accent_blue"
-                        android:textSize="13sp"
-                        android:textStyle="bold" />
-                </LinearLayout>
-
-                <SeekBar
-                    android:id="@+id/sb_media_volume"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:max="100"
-                    android:progress="50" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_marginTop="8dp">
-
-                <Button
-                    android:id="@+id/btn_open_multivolume"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:minHeight="40dp"
-                    android:gravity="center"
-                    android:paddingStart="10dp"
-                    android:paddingEnd="10dp"
-                    android:paddingTop="8dp"
-                    android:paddingBottom="8dp"
-                    android:layout_weight="1"
-                    android:background="@drawable/btn_secondary"
-                    android:text="🎛️ Микшер Multi-Volume"
-                    android:textAllCaps="false"
-                    android:textColor="#FFFFFF"
-                    android:textSize="12sp"
-                    android:textStyle="bold"
-                    android:layout_marginEnd="4dp" />
-
-                <Button
-                    android:id="@+id/btn_open_dolby"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:minHeight="40dp"
-                    android:gravity="center"
-                    android:paddingStart="10dp"
-                    android:paddingEnd="10dp"
-                    android:paddingTop="8dp"
-                    android:paddingBottom="8dp"
-                    android:layout_weight="1"
-                    android:background="@drawable/btn_secondary"
-                    android:text="🎵 Dolby Atmos"
-                    android:textAllCaps="false"
-                    android:textColor="#FFFFFF"
-                    android:textSize="12sp"
-                    android:textStyle="bold"
-                    android:layout_marginStart="4dp" />
-            </LinearLayout>
+                android:layout_marginStart="8dp"
+                android:text="›"
+                android:textColor="@color/text_muted"
+                android:textSize="22sp" />
         </LinearLayout>
 
-        <!-- Card: Управление питанием и сквозная зарядка -->
+        <!-- 4. Touch & 1500Hz Card -->
         <LinearLayout
-            android:id="@+id/card_power_control"
+            android:id="@+id/card_menu_touch"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
+            android:layout_marginBottom="8dp"
             android:background="@drawable/card_bg"
-            android:orientation="vertical"
-            android:padding="16dp">
+            android:clickable="true"
+            android:focusable="true"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:padding="14dp">
+
+            <ImageView
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:background="@drawable/btn_chip"
+                android:padding="9dp"
+                android:src="@drawable/ic_cat_touch" />
 
             <LinearLayout
-                android:layout_width="match_parent"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:gravity="center_vertical">
-
-                <ImageView
-                    android:layout_width="22dp"
-                    android:layout_height="22dp"
-                    android:src="@drawable/ic_cat_power"
-                    android:layout_marginEnd="8dp" />
+                android:layout_marginStart="14dp"
+                android:layout_weight="1"
+                android:orientation="vertical">
 
                 <TextView
-                    android:layout_width="0dp"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
+                    android:text="Отклик сенсора и 1500 Гц"
+                    android:textColor="@color/text_primary"
+                    android:textSize="15sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="2dp"
+                    android:text="Goodix 1500Hz, скорость указателя, Турбо-режим"
+                    android:textColor="@color/text_secondary"
+                    android:textSize="12sp" />
+
+                <TextView
+                    android:id="@+id/tv_sub_touch"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="3dp"
+                    android:text="Отклик: 50% (Сток)"
+                    android:textColor="@color/accent_yellow"
+                    android:textSize="11sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:text="›"
+                android:textColor="@color/text_muted"
+                android:textSize="22sp" />
+        </LinearLayout>
+
+        <!-- 5. Power & Bypass Charging Card -->
+        <LinearLayout
+            android:id="@+id/card_menu_power"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:background="@drawable/card_bg"
+            android:clickable="true"
+            android:focusable="true"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:padding="14dp">
+
+            <ImageView
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:background="@drawable/btn_chip"
+                android:padding="9dp"
+                android:src="@drawable/ic_cat_power" />
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="14dp"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:text="Питание и Bypass Charging"
                     android:textColor="@color/text_primary"
-                    android:textSize="17sp"
+                    android:textSize="15sp"
                     android:textStyle="bold" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:background="@drawable/btn_chip"
-                    android:paddingStart="8dp"
-                    android:paddingEnd="8dp"
-                    android:paddingTop="3dp"
-                    android:paddingBottom="3dp"
-                    android:text="Bypass Charging"
+                    android:layout_marginTop="2dp"
+                    android:text="Сквозное питание в обход АКБ, нагрев, энергосбережение"
+                    android:textColor="@color/text_secondary"
+                    android:textSize="12sp" />
+
+                <TextView
+                    android:id="@+id/tv_sub_power"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="3dp"
+                    android:text="Bypass: Выкл"
                     android:textColor="@color/accent_green"
                     android:textSize="11sp"
                     android:textStyle="bold" />
@@ -1647,137 +577,62 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:text="• Сквозное питание (Bypass Charging): прямое питание смартфона от сетевого адаптера без зарядки аккумулятора — предотвращает нагрев и сохраняет жизнь батарее в играх\n• Интеллектуальный режим энергосбережения системы\n• Глубокая оптимизация спящего режима Moto Battery Care"
-                android:textColor="@color/text_secondary"
-                android:textSize="13sp"
-                android:lineSpacingExtra="3dp" />
-
-            <!-- Battery Status Header Box -->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:layout_marginTop="12dp"
-                android:background="#151921"
-                android:padding="12dp">
-
-                <TextView
-                    android:id="@+id/tv_battery_status"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="🔋 Батарея: Загрузка статуса..."
-                    android:textColor="@color/accent_green"
-                    android:textSize="13sp"
-                    android:textStyle="bold" />
-            </LinearLayout>
-
-            <!-- Bypass Charging Toggle Button -->
-            <Button
-                android:id="@+id/btn_toggle_bypass_charging"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                    android:minHeight="48dp"
-                    android:gravity="center"
-                    android:paddingStart="10dp"
-                    android:paddingEnd="10dp"
-                    android:paddingTop="8dp"
-                    android:paddingBottom="8dp"
-                android:layout_marginTop="10dp"
-                android:background="@drawable/btn_primary"
-                android:text="⚡ Включить сквозное питание (Bypass)"
-                android:textAllCaps="false"
-                android:textColor="#FFFFFF"
-                android:textSize="13sp"
-                android:textStyle="bold" />
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_marginTop="8dp">
-
-                <Button
-                    android:id="@+id/btn_toggle_power_saver"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:minHeight="40dp"
-                    android:gravity="center"
-                    android:paddingStart="10dp"
-                    android:paddingEnd="10dp"
-                    android:paddingTop="8dp"
-                    android:paddingBottom="8dp"
-                    android:layout_weight="1"
-                    android:background="@drawable/btn_chip"
-                    android:text="🔋 Энергосбережение: Выкл"
-                    android:textAllCaps="false"
-                    android:textColor="@color/text_primary"
-                    android:textSize="11sp"
-                    android:textStyle="bold"
-                    android:layout_marginEnd="4dp" />
-
-                <Button
-                    android:id="@+id/btn_open_battery_care"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:minHeight="40dp"
-                    android:gravity="center"
-                    android:paddingStart="10dp"
-                    android:paddingEnd="10dp"
-                    android:paddingTop="8dp"
-                    android:paddingBottom="8dp"
-                    android:layout_weight="1"
-                    android:background="@drawable/btn_chip"
-                    android:text="⚙️ Moto Battery Care"
-                    android:textAllCaps="false"
-                    android:textColor="@color/accent_blue"
-                    android:textSize="12sp"
-                    android:textStyle="bold"
-                    android:layout_marginStart="4dp" />
-            </LinearLayout>
+                android:layout_marginStart="8dp"
+                android:text="›"
+                android:textColor="@color/text_muted"
+                android:textSize="22sp" />
         </LinearLayout>
 
-        <!-- Card: Скорость интернета в статус-баре -->
+        <!-- 6. Network Speed Meter Card -->
         <LinearLayout
-            android:id="@+id/card_network_speed"
+            android:id="@+id/card_menu_net"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
+            android:layout_marginBottom="8dp"
             android:background="@drawable/card_bg"
-            android:orientation="vertical"
-            android:padding="16dp">
+            android:clickable="true"
+            android:focusable="true"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:padding="14dp">
+
+            <ImageView
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:background="@drawable/btn_chip"
+                android:padding="9dp"
+                android:src="@drawable/ic_cat_net" />
 
             <LinearLayout
-                android:layout_width="match_parent"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:gravity="center_vertical">
-
-                <ImageView
-                    android:layout_width="22dp"
-                    android:layout_height="22dp"
-                    android:src="@drawable/ic_cat_net"
-                    android:layout_marginEnd="8dp" />
+                android:layout_marginStart="14dp"
+                android:layout_weight="1"
+                android:orientation="vertical">
 
                 <TextView
-                    android:layout_width="0dp"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
                     android:text="Скорость сети в статус-баре"
                     android:textColor="@color/text_primary"
-                    android:textSize="17sp"
+                    android:textSize="15sp"
                     android:textStyle="bold" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:background="@drawable/btn_chip"
-                    android:paddingStart="8dp"
-                    android:paddingEnd="8dp"
-                    android:paddingTop="3dp"
-                    android:paddingBottom="3dp"
-                    android:text="Status Bar • Live"
-                    android:textColor="@color/accent_cyan"
+                    android:layout_marginTop="2dp"
+                    android:text="Прозрачный оверлей трафика, автокалибровка для выреза"
+                    android:textColor="@color/text_secondary"
+                    android:textSize="12sp" />
+
+                <TextView
+                    android:id="@+id/tv_sub_net"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="3dp"
+                    android:text="Активен ✓ • 132 dp"
+                    android:textColor="@color/accent_blue"
                     android:textSize="11sp"
                     android:textStyle="bold" />
             </LinearLayout>
@@ -1785,194 +640,124 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:text="• Живой индикатор скорости прямо в системном статус-баре (KB/s, MB/s) с автоадаптацией цвета под тему\n• В шторке: раздельно ↓ Загрузка / ↑ Отдача и трафик за сессию (Wi-Fi / Моб.)\n• 0% расхода в режиме ожидания (автопауза при выключении экрана); с Root активирует нативный слот Motorola"
-                android:textColor="@color/text_secondary"
-                android:textSize="13sp"
-                android:lineSpacingExtra="3dp" />
-
-            <Button
-                android:id="@+id/btn_toggle_net_speed"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                    android:minHeight="46dp"
-                    android:gravity="center"
-                    android:paddingStart="10dp"
-                    android:paddingEnd="10dp"
-                    android:paddingTop="8dp"
-                    android:paddingBottom="8dp"
-                android:layout_marginTop="12dp"
-                android:background="@drawable/btn_primary"
-                android:text="📶 Показать скорость в статус-баре"
-                android:textAllCaps="false"
-                android:textColor="#FFFFFF"
-                android:textSize="13sp"
-                android:textStyle="bold" />
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_marginTop="8dp">
-
-                <Button
-                    android:id="@+id/btn_net_speed_hide_idle"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:minHeight="40dp"
-                    android:gravity="center"
-                    android:paddingStart="10dp"
-                    android:paddingEnd="10dp"
-                    android:paddingTop="8dp"
-                    android:paddingBottom="8dp"
-                    android:layout_weight="1"
-                    android:background="@drawable/btn_chip"
-                    android:text="💤 Скрывать при 0: Выкл"
-                    android:textAllCaps="false"
-                    android:textColor="@color/text_primary"
-                    android:textSize="11sp"
-                    android:textStyle="bold"
-                    android:layout_marginEnd="4dp" />
-
-                <Button
-                    android:id="@+id/btn_net_speed_autostart"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:minHeight="40dp"
-                    android:gravity="center"
-                    android:paddingStart="10dp"
-                    android:paddingEnd="10dp"
-                    android:paddingTop="8dp"
-                    android:paddingBottom="8dp"
-                    android:layout_weight="1"
-                    android:background="@drawable/btn_chip"
-                    android:text="🔄 Автозапуск: Вкл ✓"
-                    android:textAllCaps="false"
-                    android:textColor="@color/accent_green"
-                    android:textSize="11sp"
-                    android:textStyle="bold"
-                    android:layout_marginStart="4dp" />
-            </LinearLayout>
-
-            <Button
-                android:id="@+id/btn_net_speed_icon_mode"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                    android:minHeight="38dp"
-                    android:gravity="center"
-                    android:paddingStart="10dp"
-                    android:paddingEnd="10dp"
-                    android:paddingTop="8dp"
-                    android:paddingBottom="8dp"
-                android:layout_marginTop="6dp"
-                android:background="@drawable/btn_chip"
-                android:text="👁️ Вид: Справа у батареи (Фикс. ↓/↑)"
-                android:textAllCaps="false"
-                android:textColor="@color/accent_cyan"
-                android:textSize="11sp"
-                android:textStyle="bold" />
-
-            <!-- Right-Side Overlay Position Slider -->
-            <LinearLayout
-                android:id="@+id/layout_net_speed_offset"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:layout_marginTop="6dp"
-                android:background="#151921"
-                android:padding="10dp">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal">
-
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="Позиция справа (отступ от края):"
-                        android:textColor="@color/text_muted"
-                        android:textSize="11sp" />
-
-                    <TextView
-                        android:id="@+id/tv_net_speed_offset_val"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="132 dp"
-                        android:textColor="@color/accent_cyan"
-                        android:textSize="11sp"
-                        android:textStyle="bold" />
-                </LinearLayout>
-
-                <SeekBar
-                    android:id="@+id/sb_net_speed_offset"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="4dp"
-                    android:max="230"
-                    android:progress="102" />
-            </LinearLayout>
-
-            <Button
-                android:id="@+id/btn_net_speed_units"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                    android:minHeight="38dp"
-                    android:gravity="center"
-                    android:paddingStart="10dp"
-                    android:paddingEnd="10dp"
-                    android:paddingTop="8dp"
-                    android:paddingBottom="8dp"
-                android:layout_marginTop="6dp"
-                android:background="@drawable/btn_chip"
-                android:text="📊 Единицы измерения: КБ/с • МБ/с (Байты)"
-                android:textAllCaps="false"
-                android:textColor="@color/text_secondary"
-                android:textSize="11sp"
-                android:textStyle="bold" />
+                android:layout_marginStart="8dp"
+                android:text="›"
+                android:textColor="@color/text_muted"
+                android:textSize="22sp" />
         </LinearLayout>
 
-        <!-- Card 2: Отключение APK (Debloater) -->
+        <!-- 7. Audio & Dolby Atmos Card -->
         <LinearLayout
-            android:id="@+id/card_nav_debloat"
+            android:id="@+id/card_menu_audio"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
+            android:layout_marginBottom="8dp"
             android:background="@drawable/card_bg"
-            android:orientation="vertical"
-            android:padding="16dp">
+            android:clickable="true"
+            android:focusable="true"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:padding="14dp">
+
+            <ImageView
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:background="@drawable/btn_chip"
+                android:padding="9dp"
+                android:src="@drawable/ic_cat_audio" />
 
             <LinearLayout
-                android:layout_width="match_parent"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:gravity="center_vertical">
-
-                <ImageView
-                    android:layout_width="22dp"
-                    android:layout_height="22dp"
-                    android:src="@drawable/ic_cat_debloat"
-                    android:layout_marginEnd="8dp" />
+                android:layout_marginStart="14dp"
+                android:layout_weight="1"
+                android:orientation="vertical">
 
                 <TextView
-                    android:layout_width="0dp"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="Отключение APK (Debloater)"
+                    android:text="Звук и Dolby Atmos"
                     android:textColor="@color/text_primary"
-                    android:textSize="17sp"
+                    android:textSize="15sp"
                     android:textStyle="bold" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:background="@drawable/btn_chip"
-                    android:paddingStart="8dp"
-                    android:paddingEnd="8dp"
-                    android:paddingTop="3dp"
-                    android:paddingBottom="3dp"
-                    android:text="Очистка памяти"
+                    android:layout_marginTop="2dp"
+                    android:text="Микшер, эффекты Dolby Atmos, обход лимита громкости"
+                    android:textColor="@color/text_secondary"
+                    android:textSize="12sp" />
+
+                <TextView
+                    android:id="@+id/tv_sub_audio"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="3dp"
+                    android:text="Dolby Atmos • Multi-Volume"
+                    android:textColor="@color/accent_purple"
+                    android:textSize="11sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:text="›"
+                android:textColor="@color/text_muted"
+                android:textSize="22sp" />
+        </LinearLayout>
+
+        <!-- 8. Debloater Card -->
+        <LinearLayout
+            android:id="@+id/card_menu_debloat"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:background="@drawable/card_bg"
+            android:clickable="true"
+            android:focusable="true"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:padding="14dp">
+
+            <ImageView
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:background="@drawable/btn_chip"
+                android:padding="9dp"
+                android:src="@drawable/ic_cat_debloat" />
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="14dp"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Очистка приложений (Debloater)"
+                    android:textColor="@color/text_primary"
+                    android:textSize="15sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="2dp"
+                    android:text="Отключение 27 фоновых служб, трекеров и телеметрии"
+                    android:textColor="@color/text_secondary"
+                    android:textSize="12sp" />
+
+                <TextView
+                    android:id="@+id/tv_sub_debloat"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="3dp"
+                    android:text="Пресеты очистки: Авторский / AOSP"
                     android:textColor="@color/accent_green"
                     android:textSize="11sp"
                     android:textStyle="bold" />
@@ -1981,71 +766,61 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:text="• Сценарий очистки (пакетное отключение 27 нежелательных служб)\n• Удаление кредитных трекеров, телеметрии и рекламы\n• Ручной менеджер приложений с описанием служб\n• Полная обратимость — включение обратно в 1 клик"
-                android:textColor="@color/text_secondary"
-                android:textSize="13sp"
-                android:lineSpacingExtra="3dp" />
-
-            <Button
-                android:id="@+id/btn_open_debloat"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                    android:minHeight="48dp"
-                    android:gravity="center"
-                    android:paddingStart="10dp"
-                    android:paddingEnd="10dp"
-                    android:paddingTop="8dp"
-                    android:paddingBottom="8dp"
-                android:layout_marginTop="14dp"
-                android:background="@drawable/btn_secondary"
-                android:text="Управление приложениями (APK) →"
-                android:textAllCaps="false"
-                android:textColor="#FFFFFF"
-                android:textSize="14sp"
-                android:textStyle="bold" />
+                android:layout_marginStart="8dp"
+                android:text="›"
+                android:textColor="@color/text_muted"
+                android:textSize="22sp" />
         </LinearLayout>
 
-        <!-- Card 3: Эксперименты: Фикс NFC (Magisk / Root) -->
+        <!-- 9. NFC Fix Card -->
         <LinearLayout
-            android:id="@+id/card_nfc_fix"
+            android:id="@+id/card_menu_nfc"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
+            android:layout_marginBottom="16dp"
             android:background="@drawable/card_bg"
-            android:orientation="vertical"
-            android:padding="16dp">
+            android:clickable="true"
+            android:focusable="true"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:padding="14dp">
+
+            <ImageView
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:background="@drawable/btn_chip"
+                android:padding="9dp"
+                android:src="@drawable/ic_cat_nfc" />
 
             <LinearLayout
-                android:layout_width="match_parent"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:gravity="center_vertical">
-
-                <ImageView
-                    android:layout_width="22dp"
-                    android:layout_height="22dp"
-                    android:src="@drawable/ic_cat_nfc"
-                    android:layout_marginEnd="8dp" />
+                android:layout_marginStart="14dp"
+                android:layout_weight="1"
+                android:orientation="vertical">
 
                 <TextView
-                    android:layout_width="0dp"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
                     android:text="Фикс NFC (Mir Pay / СБПэй)"
                     android:textColor="@color/text_primary"
-                    android:textSize="17sp"
+                    android:textSize="15sp"
                     android:textStyle="bold" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:background="@drawable/btn_chip"
-                    android:paddingStart="8dp"
-                    android:paddingEnd="8dp"
-                    android:paddingTop="3dp"
-                    android:paddingBottom="3dp"
-                    android:text="100% терминалов РФ"
+                    android:layout_marginTop="2dp"
+                    android:text="Маршруты DH 0x00 для 100% бесконтактных терминалов РФ"
+                    android:textColor="@color/text_secondary"
+                    android:textSize="12sp" />
+
+                <TextView
+                    android:id="@+id/tv_sub_nfc"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="3dp"
+                    android:text="100% терминалов РФ ✓"
                     android:textColor="@color/accent_green"
                     android:textSize="11sp"
                     android:textStyle="bold" />
@@ -2054,97 +829,10 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:text="• Фикс бесконтактной оплаты Mir Pay / СБПэй / Т-Банк для 100% терминалов РФ\n• Перенаправление маршрутов Empty AID, ISO-DEP и Tech A/B на Host Android (DH 0x00)\n• Активация на лету в 1 клик через Shizuku (без ПК и без Root) или через Root\n• Не требует перезагрузки устройства — оплата начинает работать сразу"
-                android:textColor="@color/text_secondary"
-                android:textSize="13sp"
-                android:lineSpacingExtra="3dp" />
-
-            <TextView
-                android:id="@+id/tv_nfc_author"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="6dp"
-                android:text="Автор фикса: stepchansky (пост на 4PDA ↗)"
-                android:textColor="@color/accent_blue"
-                android:textSize="12sp"
-                android:clickable="true"
-                android:focusable="true" />
-
-            <TextView
-                android:id="@+id/tv_nfc_status"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Статус маршрутов: Проверка..."
+                android:layout_marginStart="8dp"
+                android:text="›"
                 android:textColor="@color/text_muted"
-                android:textSize="12sp"
-                android:textStyle="bold"
-                android:layout_marginTop="10dp" />
-
-            <!-- Main Full-Width Action Button -->
-            <Button
-                android:id="@+id/btn_install_nfc_module"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                    android:minHeight="48dp"
-                    android:gravity="center"
-                    android:paddingStart="10dp"
-                    android:paddingEnd="10dp"
-                    android:paddingTop="8dp"
-                    android:paddingBottom="8dp"
-                android:layout_marginTop="14dp"
-                android:background="@drawable/btn_primary"
-                android:text="⚡ Активировать фикс (в 1 клик)"
-                android:textAllCaps="false"
-                android:textColor="#FFFFFF"
-                android:textSize="14sp"
-                android:textStyle="bold" />
-
-            <!-- Secondary 2-Column Action Buttons -->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_marginTop="8dp">
-
-                <Button
-                    android:id="@+id/btn_uninstall_nfc_module"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:minHeight="40dp"
-                    android:gravity="center"
-                    android:paddingStart="10dp"
-                    android:paddingEnd="10dp"
-                    android:paddingTop="8dp"
-                    android:paddingBottom="8dp"
-                    android:layout_weight="1"
-                    android:background="@drawable/btn_chip"
-                    android:text="🔄 Откат к стоку (eSE1)"
-                    android:textAllCaps="false"
-                    android:textColor="@color/accent_yellow"
-                    android:textSize="12sp"
-                    android:textStyle="bold"
-                    android:layout_marginEnd="4dp" />
-
-                <Button
-                    android:id="@+id/btn_export_nfc_zip"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:minHeight="40dp"
-                    android:gravity="center"
-                    android:paddingStart="10dp"
-                    android:paddingEnd="10dp"
-                    android:paddingTop="8dp"
-                    android:paddingBottom="8dp"
-                    android:layout_weight="1"
-                    android:background="@drawable/btn_chip"
-                    android:text="📦 Экспорт ZIP"
-                    android:textAllCaps="false"
-                    android:textColor="@color/text_primary"
-                    android:textSize="12sp"
-                    android:textStyle="bold"
-                    android:layout_marginStart="4dp" />
-            </LinearLayout>
+                android:textSize="22sp" />
         </LinearLayout>
 
         <!-- Community Footer with Author Credits -->
@@ -2152,39 +840,28 @@
             android:id="@+id/layout_footer_author"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="32dp"
-            android:layout_marginBottom="24dp"
-            android:gravity="center"
             android:orientation="vertical"
+            android:gravity="center"
+            android:padding="16dp"
             android:clickable="true"
             android:focusable="true">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="LenovoMotorolovichY70 v2.9"
-                android:textColor="@color/text_secondary"
-                android:textSize="12sp"
-                android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/tv_app_author"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="3dp"
                 android:text="Автор приложения: nik.reneyj (тема на 4PDA ↗)"
                 android:textColor="@color/accent_blue"
                 android:textSize="12sp"
-                android:clickable="true"
-                android:focusable="true" />
+                android:textStyle="bold" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="3dp"
-                android:text="Автономно • Без ПК • С поддержкой Shizuku &amp; Root"
+                android:layout_marginTop="4dp"
+                android:text="Lenovo Legion Y70 &amp; Motorola Edge 70 Max • 2026"
                 android:textColor="@color/text_muted"
-                android:textSize="11sp" />
+                android:textSize="10sp" />
         </LinearLayout>
 
     </LinearLayout>

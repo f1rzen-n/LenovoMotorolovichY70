@@ -52,6 +52,48 @@
             android:exported="true"
             android:configChanges="orientation|screenSize|screenLayout" />
 
+        <!-- Eye Care & DC Dimming Activity -->
+        <activity
+            android:name=".EyeCareActivity"
+            android:exported="true"
+            android:configChanges="orientation|screenSize|screenLayout" />
+
+        <!-- Always On Display Activity -->
+        <activity
+            android:name=".AodActivity"
+            android:exported="true"
+            android:configChanges="orientation|screenSize|screenLayout" />
+
+        <!-- Touch & 1500Hz Activity -->
+        <activity
+            android:name=".TouchActivity"
+            android:exported="true"
+            android:configChanges="orientation|screenSize|screenLayout" />
+
+        <!-- Power & Bypass Charging Activity -->
+        <activity
+            android:name=".PowerActivity"
+            android:exported="true"
+            android:configChanges="orientation|screenSize|screenLayout" />
+
+        <!-- Network Speed Status Bar Activity -->
+        <activity
+            android:name=".NetworkSpeedActivity"
+            android:exported="true"
+            android:configChanges="orientation|screenSize|screenLayout" />
+
+        <!-- Audio & Dolby Atmos Activity -->
+        <activity
+            android:name=".AudioActivity"
+            android:exported="true"
+            android:configChanges="orientation|screenSize|screenLayout" />
+
+        <!-- NFC Fix Activity -->
+        <activity
+            android:name=".NfcFixActivity"
+            android:exported="true"
+            android:configChanges="orientation|screenSize|screenLayout" />
+
         <!-- Shizuku Provider and Client V3 Support -->
         <provider
             android:name="rikka.shizuku.ShizukuProvider"

@@ -34,21 +34,33 @@ public class ResolutionTileService extends TileService {
         Point p = DisplayManagerHelper.getCurrentResolution(this);
         int minRes = Math.min(p.x, p.y);
 
+        android.content.SharedPreferences prefs = getSharedPreferences("resolution_master_prefs", MODE_PRIVATE);
+        int fhdDpi = prefs.getInt("selected_fhd_dpi", DisplayManagerHelper.FHD_DENSITY);
+        int hdDpi = prefs.getInt("selected_hd_dpi", DisplayManagerHelper.HD_DENSITY);
+        int qhdDpi = prefs.getInt("selected_qhd_dpi", DisplayManagerHelper.NATIVE_DENSITY);
+
         if (minRes > 1080) {
             // Currently QHD+ (1440p) -> switch to FHD+ (1080p)
             DisplayManagerHelper.setResolution(this,
                 DisplayManagerHelper.FHD_WIDTH,
                 DisplayManagerHelper.FHD_HEIGHT,
-                DisplayManagerHelper.FHD_DENSITY);
+                fhdDpi);
         } else if (minRes > 720) {
             // Currently FHD+ (1080p) -> switch to HD+ (720p)
             DisplayManagerHelper.setResolution(this,
                 DisplayManagerHelper.HD_WIDTH,
                 DisplayManagerHelper.HD_HEIGHT,
-                DisplayManagerHelper.HD_DENSITY);
+                hdDpi);
         } else {
             // Currently HD+ (720p) -> switch to Native QHD+ (1440p)
-            DisplayManagerHelper.resetResolution(this);
+            if (qhdDpi == DisplayManagerHelper.NATIVE_DENSITY) {
+                DisplayManagerHelper.resetResolution(this);
+            } else {
+                DisplayManagerHelper.setResolution(this,
+                    DisplayManagerHelper.QHD_WIDTH,
+                    DisplayManagerHelper.QHD_HEIGHT,
+                    qhdDpi);
+            }
         }
 
         updateTileState();

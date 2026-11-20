@@ -104,19 +104,30 @@ public class NetworkSpeedService extends Service {
     };
 
     private int mLastKnownDpi = 0;
+    private int mLastKnownWidth = 0;
 
     private final Runnable mTickRunnable = new Runnable() {
         @Override
         public void run() {
             if (!sRunning || !mScreenOn) return;
             try {
-                int curDpi = Math.round(getLiveDensity() * 160.0f);
-                if (mLastKnownDpi > 0 && Math.abs(curDpi - mLastKnownDpi) > 10) {
+                int curDpi = DisplayManagerHelper.getCurrentDensity(NetworkSpeedService.this);
+                Point pt = DisplayManagerHelper.getCurrentResolution(NetworkSpeedService.this);
+                int curWidth = (pt != null) ? Math.min(pt.x, pt.y) : 0;
+
+                if ((mLastKnownDpi > 0 && Math.abs(curDpi - mLastKnownDpi) > 5) ||
+                    (mLastKnownWidth > 0 && Math.abs(curWidth - mLastKnownWidth) > 10)) {
                     mLastKnownDpi = curDpi;
+                    mLastKnownWidth = curWidth;
                     int mode = NetworkSpeedHelper.getIconMode(NetworkSpeedService.this);
                     if (mode == NetworkSpeedHelper.ICON_MODE_RIGHT_OVERLAY) {
                         removeOverlay();
                         ensureOverlayAttached();
+                    }
+                } else if (mOverlayRoot != null) {
+                    int targetOffsetPx = getClampedOverlayOffsetPx();
+                    if (mOverlayParams != null && Math.abs(mOverlayParams.x - targetOffsetPx) > 3) {
+                        updateOverlayPosition();
                     }
                 }
             } catch (Throwable ignored) {}
@@ -372,35 +383,10 @@ public class NetworkSpeedService extends Service {
     // ==================== Fixed Right-Side Status Bar Overlay ====================
 
     private float getLiveDensity() {
-        // 1. Instantaneous forced density check
-        try {
-            int forcedDpi = Settings.Secure.getInt(getContentResolver(), "display_density_forced", 0);
-            if (forcedDpi > 0) {
-                return forcedDpi / 160.0f;
-            }
-        } catch (Throwable ignored) {}
-
-        // 2. Real display metrics from WindowManager default display
-        try {
-            if (mWindowManager != null) {
-                Display display = mWindowManager.getDefaultDisplay();
-                if (display != null) {
-                    DisplayMetrics dm = new DisplayMetrics();
-                    display.getRealMetrics(dm);
-                    if (dm.density > 0) {
-                        return dm.density;
-                    }
-                }
-            }
-        } catch (Throwable ignored) {}
-
-        // 3. Fallback to Resources
-        try {
-            int dpi = getResources().getConfiguration().densityDpi;
-            if (dpi > 0) {
-                return dpi / 160.0f;
-            }
-        } catch (Throwable ignored) {}
+        int dpi = DisplayManagerHelper.getCurrentDensity(this);
+        if (dpi > 0) {
+            return dpi / 160.0f;
+        }
         return getResources().getDisplayMetrics().density;
     }
 
@@ -413,7 +399,7 @@ public class NetworkSpeedService extends Service {
         try {
             Point pt = DisplayManagerHelper.getCurrentResolution(this);
             if (pt != null && pt.x > 0) {
-                wPx = pt.x;
+                wPx = Math.min(pt.x, pt.y);
             }
         } catch (Throwable ignored) {}
         if (wPx <= 0 && Build.VERSION.SDK_INT >= Build.VERSION_CODES.R && mWindowManager != null) {
@@ -443,25 +429,10 @@ public class NetworkSpeedService extends Service {
             } catch (Throwable ignored) {}
         }
 
-        // Validate sbHeight against live density: standard status bar on Y70 is ~46dp
-        // If insets.top in dp is unreasonable (< 20dp or > 65dp), calculate from expected 46dp
+        // Validate sbHeight against live density: standard status bar on Y70 / Edge 70 Max is 46dp
+        // If insets.top in dp is unreasonable (< 36dp or > 56dp, e.g. while shade is animating), fallback to exact 46dp
         float sbDp = density > 0 ? (sbHeight / density) : 0;
-        if (sbDp < 20f || sbDp > 65f) {
-            sbHeight = 0;
-        }
-
-        if (sbHeight <= 0) {
-            int resId = getResources().getIdentifier("status_bar_height", "dimen", "android");
-            if (resId > 0) {
-                try {
-                    sbHeight = getResources().getDimensionPixelSize(resId);
-                } catch (Throwable ignored) {}
-            }
-        }
-
-        sbDp = density > 0 ? (sbHeight / density) : 0;
-        if (sbDp < 20f || sbDp > 65f || sbHeight <= 0) {
-            // Lenovo Legion Y70 / Moto Edge 70 Max status bar is ~46dp with punch hole
+        if (sbDp < 36f || sbDp > 56f || sbHeight <= 0) {
             sbHeight = Math.round(46.0f * density);
         }
         return sbHeight;
@@ -470,14 +441,17 @@ public class NetworkSpeedService extends Service {
     private int getClampedOverlayOffsetPx() {
         int userDp = NetworkSpeedHelper.getOverlayOffsetDp(this);
         int screenWidthDp = getScreenWidthDp();
-        // Never exceed 42% of screen width so it never crosses the center punch-hole camera or left notification area
-        int maxSafeDp = Math.max(45, (int) (screenWidthDp * 0.42f));
+        // Never exceed 48% of screen width so it never crosses the center punch-hole camera or left notification area
+        int maxSafeDp = Math.max(45, (int) (screenWidthDp * 0.48f));
         int clampedDp = Math.min(userDp, maxSafeDp);
         return dpToPx(clampedDp);
     }
 
     private void ensureOverlayAttached() {
-        if (mOverlayRoot != null) return;
+        if (mOverlayRoot != null) {
+            updateOverlayPosition();
+            return;
+        }
         if (mWindowManager == null || !Settings.canDrawOverlays(this)) return;
 
         try {

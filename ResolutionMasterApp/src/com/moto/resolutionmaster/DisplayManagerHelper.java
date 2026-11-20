@@ -83,9 +83,9 @@ public class DisplayManagerHelper {
                 Method setDensity = wms.getClass().getMethod("setForcedDisplayDensityForUser", int.class, int.class, int.class);
                 setDensity.invoke(wms, Display.DEFAULT_DISPLAY, density, userId);
                 try {
-                    NetworkSpeedHelper.refreshService(context);
                     NetworkSpeedHelper.refreshServiceDelayed(context, 150);
-                    NetworkSpeedHelper.refreshServiceDelayed(context, 500);
+                    NetworkSpeedHelper.refreshServiceDelayed(context, 400);
+                    NetworkSpeedHelper.refreshServiceDelayed(context, 800);
                 } catch (Throwable ignored) {}
                 return true;
             }
@@ -97,9 +97,9 @@ public class DisplayManagerHelper {
         String shellCmd = "wm size " + width + "x" + height + "; wm density " + density;
         boolean res = ShellHelper.runCommand(context, shellCmd);
         try {
-            NetworkSpeedHelper.refreshService(context);
             NetworkSpeedHelper.refreshServiceDelayed(context, 150);
-            NetworkSpeedHelper.refreshServiceDelayed(context, 500);
+            NetworkSpeedHelper.refreshServiceDelayed(context, 400);
+            NetworkSpeedHelper.refreshServiceDelayed(context, 800);
         } catch (Throwable ignored) {}
         return res;
     }
@@ -121,9 +121,9 @@ public class DisplayManagerHelper {
                 Method clearDensity = wms.getClass().getMethod("clearForcedDisplayDensityForUser", int.class, int.class);
                 clearDensity.invoke(wms, Display.DEFAULT_DISPLAY, userId);
                 try {
-                    NetworkSpeedHelper.refreshService(context);
                     NetworkSpeedHelper.refreshServiceDelayed(context, 150);
-                    NetworkSpeedHelper.refreshServiceDelayed(context, 500);
+                    NetworkSpeedHelper.refreshServiceDelayed(context, 400);
+                    NetworkSpeedHelper.refreshServiceDelayed(context, 800);
                 } catch (Throwable ignored) {}
                 return true;
             }
@@ -134,9 +134,9 @@ public class DisplayManagerHelper {
         // 2. Shell fallback (Root / Shizuku if available)
         boolean res = ShellHelper.runCommand(context, "wm size reset; wm density reset");
         try {
-            NetworkSpeedHelper.refreshService(context);
             NetworkSpeedHelper.refreshServiceDelayed(context, 150);
-            NetworkSpeedHelper.refreshServiceDelayed(context, 500);
+            NetworkSpeedHelper.refreshServiceDelayed(context, 400);
+            NetworkSpeedHelper.refreshServiceDelayed(context, 800);
         } catch (Throwable ignored) {}
         return res;
     }

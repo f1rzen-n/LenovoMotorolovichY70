@@ -25,6 +25,19 @@ public class NetworkSpeedHelper {
     private static final String KEY_OVERLAY_OFFSET_DP = "key_net_speed_offset_dp_v2";
     private static final String KEY_NATIVE_ROOT = "key_net_speed_native_root";
 
+    // Resolution Profiles for Per-Resolution Offset Calibration
+    public static final int RES_PROFILE_QHD = 0; // >= 1400 px width
+    public static final int RES_PROFILE_FHD = 1; // 900..1200 px width
+    public static final int RES_PROFILE_HD = 2;  // <= 800 px width
+
+    public static final int DEFAULT_OFFSET_QHD = 180;
+    public static final int DEFAULT_OFFSET_FHD = 140;
+    public static final int DEFAULT_OFFSET_HD = 172;
+
+    private static final String KEY_OFFSET_QHD = "key_net_speed_offset_qhd_v3";
+    private static final String KEY_OFFSET_FHD = "key_net_speed_offset_fhd_v3";
+    private static final String KEY_OFFSET_HD = "key_net_speed_offset_hd_v3";
+
     public static final int ICON_MODE_RIGHT_OVERLAY = 0; // Fixed right side near battery (never shifts!)
     public static final int ICON_MODE_TWO = 1;           // Left: 2 icons (↓ Down + ↑ Up)
     public static final int ICON_MODE_SINGLE_SPLIT = 2;  // Left: 1 icon (↓ / ↑ stacked)
@@ -120,19 +133,57 @@ public class NetworkSpeedHelper {
         }
     }
 
+    public static int getResProfile(Context context) {
+        if (context == null) return RES_PROFILE_QHD;
+        android.graphics.Point p = DisplayManagerHelper.getCurrentResolution(context);
+        int minRes = (p != null) ? Math.min(p.x, p.y) : 1440;
+        if (minRes > 1080) {
+            return RES_PROFILE_QHD;
+        } else if (minRes > 720) {
+            return RES_PROFILE_FHD;
+        } else {
+            return RES_PROFILE_HD;
+        }
+    }
+
+    public static String getResProfileLabel(int profile) {
+        if (profile == RES_PROFILE_QHD) return "QHD+ (1440p)";
+        if (profile == RES_PROFILE_FHD) return "FHD+ (1080p)";
+        return "HD+ (720p)";
+    }
+
     public static int getOverlayOffsetDp(Context context) {
-        int val = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE)
-            .getInt(KEY_OVERLAY_OFFSET_DP, 95);
-        if (val < 15) val = 15;
-        if (val > 180) val = 180;
-        return val;
+        return getOverlayOffsetDpForProfile(context, getResProfile(context));
+    }
+
+    public static int getOverlayOffsetDpForProfile(Context context, int profile) {
+        if (context == null) return DEFAULT_OFFSET_QHD;
+        SharedPreferences sp = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
+        if (profile == RES_PROFILE_QHD) {
+            return sp.getInt(KEY_OFFSET_QHD, DEFAULT_OFFSET_QHD);
+        } else if (profile == RES_PROFILE_FHD) {
+            return sp.getInt(KEY_OFFSET_FHD, DEFAULT_OFFSET_FHD);
+        } else {
+            return sp.getInt(KEY_OFFSET_HD, DEFAULT_OFFSET_HD);
+        }
     }
 
     public static void setOverlayOffsetDp(Context context, int dp) {
+        setOverlayOffsetDpForProfile(context, getResProfile(context), dp);
+    }
+
+    public static void setOverlayOffsetDpForProfile(Context context, int profile, int dp) {
+        if (context == null) return;
         if (dp < 15) dp = 15;
-        if (dp > 180) dp = 180;
-        context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE)
-            .edit().putInt(KEY_OVERLAY_OFFSET_DP, dp).apply();
+        if (dp > 240) dp = 240;
+        SharedPreferences sp = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
+        if (profile == RES_PROFILE_QHD) {
+            sp.edit().putInt(KEY_OFFSET_QHD, dp).apply();
+        } else if (profile == RES_PROFILE_FHD) {
+            sp.edit().putInt(KEY_OFFSET_FHD, dp).apply();
+        } else {
+            sp.edit().putInt(KEY_OFFSET_HD, dp).apply();
+        }
         if (NetworkSpeedService.isRunning()) {
             refreshService(context);
         }
