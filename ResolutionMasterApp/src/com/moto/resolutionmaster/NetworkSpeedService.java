@@ -163,8 +163,8 @@ public class NetworkSpeedService extends Service {
                     int targetOffsetPx = getClampedOverlayOffsetPx();
                     int pillH = (mOverlayPill != null && mOverlayPill.getHeight() > 0)
                         ? mOverlayPill.getHeight()
-                        : dpToPx(20);
-                    int targetY = Math.max(0, (getStatusBarHeightPx() - pillH) / 2);
+                        : dpToPx(18);
+                    int targetY = getTargetOverlayY(pillH);
                     if (mOverlayParams != null && (Math.abs(mOverlayParams.x - targetOffsetPx) > 3 || Math.abs(mOverlayParams.y - targetY) > 2)) {
                         updateOverlayPosition();
                     }
@@ -542,6 +542,41 @@ public class NetworkSpeedService extends Service {
         return detected;
     }
 
+    private int getScreenHeightPx() {
+        int hPx = 0;
+        try {
+            Point pt = DisplayManagerHelper.getCurrentResolution(this);
+            if (pt != null && pt.y > 0) {
+                hPx = Math.max(pt.x, pt.y);
+            }
+        } catch (Throwable ignored) {}
+        if (hPx <= 0 && Build.VERSION.SDK_INT >= Build.VERSION_CODES.R && mWindowManager != null) {
+            try {
+                hPx = mWindowManager.getMaximumWindowMetrics().getBounds().height();
+            } catch (Throwable ignored) {}
+        }
+        if (hPx <= 0) {
+            hPx = getResources().getDisplayMetrics().heightPixels;
+        }
+        if (hPx <= 0) {
+            hPx = 2376;
+        }
+        return hPx;
+    }
+
+    private int getTargetOverlayY(int pillHeightPx) {
+        int screenHeight = getScreenHeightPx();
+        // Mathematical optical alignment:
+        // The physical camera punch-hole on Lenovo Legion Y70 / Motorola Edge 70 Max is centered at
+        // physical Y ratio 0.0251f of the screen height (79.5px on 3168p, 59.6px on 2376p, 39.8px on 1584p).
+        // The system status bar icons (clock, battery, Wi-Fi, cellular) are permanently centered on this exact line.
+        // Therefore, centering the overlay pill on this horizontal axis ensures pixel-perfect vertical alignment
+        // across any resolution and any DPI value set by the user.
+        int iconCenterY = Math.round(screenHeight * 0.0251f);
+        int userYOffsetPx = dpToPx(NetworkSpeedHelper.getOverlayOffsetYDp(this));
+        return Math.max(0, iconCenterY - (pillHeightPx / 2) + userYOffsetPx);
+    }
+
     private int getClampedOverlayOffsetPx() {
         int userDp = NetworkSpeedHelper.getOverlayOffsetDp(this);
         int screenWidthDp = getScreenWidthDp();
@@ -564,7 +599,6 @@ public class NetworkSpeedService extends Service {
             Point curRes = DisplayManagerHelper.getCurrentResolution(this);
             mLastKnownWidth = (curRes != null) ? Math.min(curRes.x, curRes.y) : 0;
 
-            int sbHeight = getStatusBarHeightPx();
             Typeface condensedBold = Typeface.create("sans-serif-condensed", Typeface.BOLD);
 
             Context viewCtx = this;
@@ -647,8 +681,8 @@ public class NetworkSpeedService extends Service {
                 View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED),
                 View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED)
             );
-            int pillHeightPx = (pill.getMeasuredHeight() > 0) ? pill.getMeasuredHeight() : dpToPx(20);
-            params.y = Math.max(0, (sbHeight - pillHeightPx) / 2);
+            int pillHeightPx = (pill.getMeasuredHeight() > 0) ? pill.getMeasuredHeight() : dpToPx(18);
+            params.y = getTargetOverlayY(pillHeightPx);
 
             if (Build.VERSION.SDK_INT >= 28) {
                 try {
@@ -675,7 +709,6 @@ public class NetworkSpeedService extends Service {
     private void updateOverlayPosition() {
         if (mOverlayRoot == null || mOverlayParams == null || mWindowManager == null) return;
         try {
-            int sbHeight = getStatusBarHeightPx();
             if (mOverlayPill != null && mOverlayPill.getHeight() <= 0) {
                 mOverlayPill.measure(
                     View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED),
@@ -686,9 +719,9 @@ public class NetworkSpeedService extends Service {
                 ? mOverlayPill.getHeight()
                 : ((mOverlayPill != null && mOverlayPill.getMeasuredHeight() > 0)
                     ? mOverlayPill.getMeasuredHeight()
-                    : dpToPx(20));
+                    : dpToPx(18));
             mOverlayParams.x = getClampedOverlayOffsetPx();
-            mOverlayParams.y = Math.max(0, (sbHeight - pillHeightPx) / 2);
+            mOverlayParams.y = getTargetOverlayY(pillHeightPx);
             mOverlayParams.width = WindowManager.LayoutParams.WRAP_CONTENT;
             mOverlayParams.height = WindowManager.LayoutParams.WRAP_CONTENT;
             if (Build.VERSION.SDK_INT >= 30) {

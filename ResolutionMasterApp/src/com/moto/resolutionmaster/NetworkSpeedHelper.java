@@ -23,6 +23,7 @@ public class NetworkSpeedHelper {
     private static final String KEY_BITS_MODE = "key_net_speed_bits_mode";
     private static final String KEY_ICON_MODE = "key_net_speed_icon_mode_v2";
     private static final String KEY_OVERLAY_OFFSET_DP = "key_net_speed_offset_dp_v2";
+    private static final String KEY_OVERLAY_OFFSET_Y_DP = "key_net_speed_offset_y_dp_v1";
     private static final String KEY_NATIVE_ROOT = "key_net_speed_native_root";
 
     // Resolution Profiles
@@ -173,6 +174,23 @@ public class NetworkSpeedHelper {
         if (val < 15) val = 15;
         if (val > 220) val = 220;
         return val;
+    }
+
+    public static int getOverlayOffsetYDp(Context context) {
+        if (context == null) return 0;
+        SharedPreferences sp = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
+        return sp.getInt(KEY_OVERLAY_OFFSET_Y_DP, 0); // 0 = automatic mathematical alignment
+    }
+
+    public static void setOverlayOffsetYDp(Context context, int dp) {
+        if (context == null) return;
+        if (dp < -10) dp = -10;
+        if (dp > 10) dp = 10;
+        SharedPreferences sp = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
+        sp.edit().putInt(KEY_OVERLAY_OFFSET_Y_DP, dp).apply();
+        if (NetworkSpeedService.isRunning()) {
+            refreshService(context);
+        }
     }
 
     public static int getOverlayOffsetDpForProfile(Context context, int profile) {

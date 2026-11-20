@@ -29,6 +29,8 @@ public class NetworkSpeedActivity extends Activity {
     private LinearLayout layoutNetSpeedOffset;
     private TextView tvNetSpeedOffsetVal;
     private SeekBar sbNetSpeedOffset;
+    private TextView tvNetSpeedOffsetYVal;
+    private SeekBar sbNetSpeedOffsetY;
     private Button btnNetSpeedUnits;
 
     @Override
@@ -63,6 +65,8 @@ public class NetworkSpeedActivity extends Activity {
         layoutNetSpeedOffset = findViewById(R.id.layout_net_speed_offset);
         tvNetSpeedOffsetVal = findViewById(R.id.tv_net_speed_offset_val);
         sbNetSpeedOffset = findViewById(R.id.sb_net_speed_offset);
+        tvNetSpeedOffsetYVal = findViewById(R.id.tv_net_speed_offset_y_val);
+        sbNetSpeedOffsetY = findViewById(R.id.sb_net_speed_offset_y);
         btnNetSpeedUnits = findViewById(R.id.btn_net_speed_units);
 
         if (btnToggleNetSpeed != null) {
@@ -137,6 +141,34 @@ public class NetworkSpeedActivity extends Activity {
                     }
                     if (fromUser) {
                         NetworkSpeedHelper.setOverlayOffsetDp(NetworkSpeedActivity.this, dp);
+                    }
+                }
+
+                @Override
+                public void onStartTrackingTouch(SeekBar seekBar) {}
+
+                @Override
+                public void onStopTrackingTouch(SeekBar seekBar) {}
+            });
+        }
+
+        if (sbNetSpeedOffsetY != null) {
+            sbNetSpeedOffsetY.setMax(20); // -10..+10 dp (progress 10 = 0 dp auto)
+            sbNetSpeedOffsetY.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+                @Override
+                public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                    int dp = progress - 10;
+                    if (tvNetSpeedOffsetYVal != null) {
+                        if (dp == 0) {
+                            tvNetSpeedOffsetYVal.setText("0 dp (Авто)");
+                        } else if (dp > 0) {
+                            tvNetSpeedOffsetYVal.setText("+" + dp + " dp (Ниже)");
+                        } else {
+                            tvNetSpeedOffsetYVal.setText(dp + " dp (Выше)");
+                        }
+                    }
+                    if (fromUser) {
+                        NetworkSpeedHelper.setOverlayOffsetYDp(NetworkSpeedActivity.this, dp);
                     }
                 }
 
@@ -264,6 +296,20 @@ public class NetworkSpeedActivity extends Activity {
         }
         if (sbNetSpeedOffset != null) {
             sbNetSpeedOffset.setProgress(Math.max(0, offsetDp - 15));
+        }
+
+        int offsetYDp = NetworkSpeedHelper.getOverlayOffsetYDp(this);
+        if (tvNetSpeedOffsetYVal != null) {
+            if (offsetYDp == 0) {
+                tvNetSpeedOffsetYVal.setText("0 dp (Авто)");
+            } else if (offsetYDp > 0) {
+                tvNetSpeedOffsetYVal.setText("+" + offsetYDp + " dp (Ниже)");
+            } else {
+                tvNetSpeedOffsetYVal.setText(offsetYDp + " dp (Выше)");
+            }
+        }
+        if (sbNetSpeedOffsetY != null) {
+            sbNetSpeedOffsetY.setProgress(Math.max(0, Math.min(20, offsetYDp + 10)));
         }
 
         boolean bitsMode = NetworkSpeedHelper.isBitsMode(this);
