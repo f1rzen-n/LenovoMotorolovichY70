@@ -25,14 +25,17 @@ public class NetworkSpeedHelper {
     private static final String KEY_OVERLAY_OFFSET_DP = "key_net_speed_offset_dp_v2";
     private static final String KEY_NATIVE_ROOT = "key_net_speed_native_root";
 
-    // Resolution Profiles for Per-Resolution Offset Calibration
+    // Resolution Profiles
     public static final int RES_PROFILE_QHD = 0; // >= 1400 px width
     public static final int RES_PROFILE_FHD = 1; // 900..1200 px width
     public static final int RES_PROFILE_HD = 2;  // <= 800 px width
 
-    public static final int DEFAULT_OFFSET_QHD = 180;
-    public static final int DEFAULT_OFFSET_FHD = 140;
-    public static final int DEFAULT_OFFSET_HD = 172;
+    // Golden Standard Default: 95 dp from the right edge positions the indicator
+    // immediately beside the system status icons (Battery, Wi-Fi, Cell) on any resolution & DPI.
+    public static final int DEFAULT_OFFSET_DP = 95;
+    public static final int DEFAULT_OFFSET_QHD = 95;
+    public static final int DEFAULT_OFFSET_FHD = 95;
+    public static final int DEFAULT_OFFSET_HD = 95;
 
     private static final String KEY_OFFSET_QHD = "key_net_speed_offset_qhd_v3";
     private static final String KEY_OFFSET_FHD = "key_net_speed_offset_fhd_v3";
@@ -153,40 +156,47 @@ public class NetworkSpeedHelper {
     }
 
     public static int getOverlayOffsetDp(Context context) {
-        return getOverlayOffsetDpForProfile(context, getResProfile(context));
+        if (context == null) return DEFAULT_OFFSET_DP;
+        SharedPreferences sp = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
+        int val = sp.getInt(KEY_OVERLAY_OFFSET_DP, -1);
+        if (val <= 0) {
+            int fhd = sp.getInt(KEY_OFFSET_FHD, -1);
+            int qhd = sp.getInt(KEY_OFFSET_QHD, -1);
+            if (fhd >= 20 && fhd <= 160) {
+                val = fhd;
+            } else if (qhd >= 20 && qhd <= 160) {
+                val = qhd;
+            } else {
+                val = DEFAULT_OFFSET_DP;
+            }
+        }
+        if (val < 15) val = 15;
+        if (val > 220) val = 220;
+        return val;
     }
 
     public static int getOverlayOffsetDpForProfile(Context context, int profile) {
-        if (context == null) return DEFAULT_OFFSET_QHD;
-        SharedPreferences sp = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
-        if (profile == RES_PROFILE_QHD) {
-            return sp.getInt(KEY_OFFSET_QHD, DEFAULT_OFFSET_QHD);
-        } else if (profile == RES_PROFILE_FHD) {
-            return sp.getInt(KEY_OFFSET_FHD, DEFAULT_OFFSET_FHD);
-        } else {
-            return sp.getInt(KEY_OFFSET_HD, DEFAULT_OFFSET_HD);
-        }
+        return getOverlayOffsetDp(context);
     }
 
     public static void setOverlayOffsetDp(Context context, int dp) {
-        setOverlayOffsetDpForProfile(context, getResProfile(context), dp);
-    }
-
-    public static void setOverlayOffsetDpForProfile(Context context, int profile, int dp) {
         if (context == null) return;
         if (dp < 15) dp = 15;
-        if (dp > 240) dp = 240;
+        if (dp > 220) dp = 220;
         SharedPreferences sp = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
-        if (profile == RES_PROFILE_QHD) {
-            sp.edit().putInt(KEY_OFFSET_QHD, dp).apply();
-        } else if (profile == RES_PROFILE_FHD) {
-            sp.edit().putInt(KEY_OFFSET_FHD, dp).apply();
-        } else {
-            sp.edit().putInt(KEY_OFFSET_HD, dp).apply();
-        }
+        sp.edit()
+            .putInt(KEY_OVERLAY_OFFSET_DP, dp)
+            .putInt(KEY_OFFSET_QHD, dp)
+            .putInt(KEY_OFFSET_FHD, dp)
+            .putInt(KEY_OFFSET_HD, dp)
+            .apply();
         if (NetworkSpeedService.isRunning()) {
             refreshService(context);
         }
+    }
+
+    public static void setOverlayOffsetDpForProfile(Context context, int profile, int dp) {
+        setOverlayOffsetDp(context, dp);
     }
 
     public static boolean hasNotificationPermission(Context context) {

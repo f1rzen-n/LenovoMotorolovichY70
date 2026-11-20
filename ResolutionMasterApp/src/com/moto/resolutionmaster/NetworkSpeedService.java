@@ -11,6 +11,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.ServiceInfo;
 import android.content.res.Configuration;
+import android.database.ContentObserver;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -22,6 +23,7 @@ import android.graphics.Typeface;
 import android.graphics.drawable.GradientDrawable;
 import android.graphics.drawable.Icon;
 import android.net.TrafficStats;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
@@ -103,6 +105,39 @@ public class NetworkSpeedService extends Service {
         }
     };
 
+    private final ContentObserver mSettingsObserver = new ContentObserver(new Handler(Looper.getMainLooper())) {
+        @Override
+        public void onChange(boolean selfChange, Uri uri) {
+            handleScreenMetricsChanged();
+        }
+    };
+
+    private void handleScreenMetricsChanged() {
+        if (!sRunning) return;
+        mHandler.post(new Runnable() {
+            @Override
+            public void run() {
+                recreateOverlayWithNewMetrics();
+            }
+        });
+        mHandler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                recreateOverlayWithNewMetrics();
+            }
+        }, 350L);
+    }
+
+    private void recreateOverlayWithNewMetrics() {
+        if (!sRunning) return;
+        int mode = NetworkSpeedHelper.getIconMode(this);
+        if (mode == NetworkSpeedHelper.ICON_MODE_RIGHT_OVERLAY) {
+            removeOverlay();
+            ensureOverlayAttached();
+            updateOverlayContent(mLastRxPerSec, mLastTxPerSec, NetworkSpeedHelper.isBitsMode(this), false);
+        }
+    }
+
     private int mLastKnownDpi = 0;
     private int mLastKnownWidth = 0;
 
@@ -164,6 +199,13 @@ public class NetworkSpeedService extends Service {
             filter.addAction(Intent.ACTION_SCREEN_ON);
             registerReceiver(mScreenReceiver, filter);
             mReceiverRegistered = true;
+        } catch (Throwable ignored) {}
+
+        try {
+            getContentResolver().registerContentObserver(
+                Settings.Secure.getUriFor("display_density_forced"), false, mSettingsObserver);
+            getContentResolver().registerContentObserver(
+                Settings.Global.getUriFor("display_size_forced"), false, mSettingsObserver);
         } catch (Throwable ignored) {}
     }
 
@@ -418,22 +460,31 @@ public class NetworkSpeedService extends Service {
         float density = getLiveDensity();
         int sbHeight = 0;
 
-        // 1. Live WindowMetrics insets
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R && mWindowManager != null) {
+        // 1. Try canonical system dimen resource
+        try {
+            int resId = getResources().getIdentifier("status_bar_height", "dimen", "android");
+            if (resId > 0) {
+                sbHeight = getResources().getDimensionPixelSize(resId);
+            }
+        } catch (Throwable ignored) {}
+
+        // 2. Live WindowMetrics insets (Android 11+)
+        if (sbHeight <= 0 && Build.VERSION.SDK_INT >= Build.VERSION_CODES.R && mWindowManager != null) {
             try {
                 android.view.WindowMetrics wm = mWindowManager.getCurrentWindowMetrics();
                 android.graphics.Insets insets = wm.getWindowInsets().getInsetsIgnoringVisibility(
                     android.view.WindowInsets.Type.statusBars()
                 );
-                sbHeight = insets.top;
+                if (insets != null && insets.top > 0) {
+                    sbHeight = insets.top;
+                }
             } catch (Throwable ignored) {}
         }
 
-        // Validate sbHeight against live density: standard status bar on Y70 / Edge 70 Max is 46dp
-        // If insets.top in dp is unreasonable (< 36dp or > 56dp, e.g. while shade is animating), fallback to exact 46dp
+        // Validate sbHeight against live density: standard status bar on Y70 / Edge 70 Max is ~32-38dp
         float sbDp = density > 0 ? (sbHeight / density) : 0;
-        if (sbDp < 36f || sbDp > 56f || sbHeight <= 0) {
-            sbHeight = Math.round(46.0f * density);
+        if (sbDp < 24f || sbDp > 56f || sbHeight <= 0) {
+            sbHeight = Math.round(34.0f * density);
         }
         return sbHeight;
     }
@@ -441,8 +492,8 @@ public class NetworkSpeedService extends Service {
     private int getClampedOverlayOffsetPx() {
         int userDp = NetworkSpeedHelper.getOverlayOffsetDp(this);
         int screenWidthDp = getScreenWidthDp();
-        // Never exceed 48% of screen width so it never crosses the center punch-hole camera or left notification area
-        int maxSafeDp = Math.max(45, (int) (screenWidthDp * 0.48f));
+        // Clamped so it never crosses the center punch-hole camera (center is at ~45-50% width)
+        int maxSafeDp = Math.max(45, (int) (screenWidthDp * 0.45f));
         int clampedDp = Math.min(userDp, maxSafeDp);
         return dpToPx(clampedDp);
     }
@@ -457,46 +508,56 @@ public class NetworkSpeedService extends Service {
         try {
             float density = getLiveDensity();
             mLastKnownDpi = Math.round(density * 160.0f);
+            Point curRes = DisplayManagerHelper.getCurrentResolution(this);
+            mLastKnownWidth = (curRes != null) ? Math.min(curRes.x, curRes.y) : 0;
+
             int sbHeight = getStatusBarHeightPx();
             Typeface condensedBold = Typeface.create("sans-serif-condensed", Typeface.BOLD);
 
-            LinearLayout root = new LinearLayout(this);
+            Context viewCtx = this;
+            try {
+                Configuration cfg = new Configuration(getResources().getConfiguration());
+                cfg.densityDpi = mLastKnownDpi;
+                viewCtx = createConfigurationContext(cfg);
+            } catch (Throwable ignored) {}
+
+            LinearLayout root = new LinearLayout(viewCtx);
             root.setOrientation(LinearLayout.VERTICAL);
             root.setGravity(Gravity.CENTER);
             root.setClickable(false);
             root.setFocusable(false);
 
-            LinearLayout pill = new LinearLayout(this);
+            LinearLayout pill = new LinearLayout(viewCtx);
             pill.setOrientation(LinearLayout.VERTICAL);
             pill.setGravity(Gravity.END);
-            int padH = dpToPx(4);
-            int padV = dpToPx(1.0f);
+            int padH = dpToPx(3);
+            int padV = dpToPx(0.5f);
             pill.setPadding(padH, padV, padH, padV);
 
             GradientDrawable bg = new GradientDrawable();
             bg.setColor(Color.TRANSPARENT);
-            bg.setCornerRadius(dpToPx(5));
+            bg.setCornerRadius(dpToPx(4));
             pill.setBackground(bg);
 
-            TextView tvDown = new TextView(this);
+            TextView tvDown = new TextView(viewCtx);
             tvDown.setTextColor(0xFFFFFFFF);
-            tvDown.setTextSize(TypedValue.COMPLEX_UNIT_SP, 9.0f);
+            tvDown.setTextSize(TypedValue.COMPLEX_UNIT_SP, 8.5f);
             tvDown.setTypeface(condensedBold);
             tvDown.setIncludeFontPadding(false);
             tvDown.setSingleLine(true);
             tvDown.setMaxLines(1);
-            tvDown.setShadowLayer(2.0f, 0f, 1f, 0xDD000000);
+            tvDown.setShadowLayer(2.5f, 0f, 1f, 0xEE000000);
             tvDown.setGravity(Gravity.END);
             tvDown.setText("↓0K");
 
-            TextView tvUp = new TextView(this);
+            TextView tvUp = new TextView(viewCtx);
             tvUp.setTextColor(0xFFD1D5DB);
-            tvUp.setTextSize(TypedValue.COMPLEX_UNIT_SP, 9.0f);
+            tvUp.setTextSize(TypedValue.COMPLEX_UNIT_SP, 8.5f);
             tvUp.setTypeface(condensedBold);
             tvUp.setIncludeFontPadding(false);
             tvUp.setSingleLine(true);
             tvUp.setMaxLines(1);
-            tvUp.setShadowLayer(2.0f, 0f, 1f, 0xDD000000);
+            tvUp.setShadowLayer(2.5f, 0f, 1f, 0xEE000000);
             tvUp.setGravity(Gravity.END);
             LinearLayout.LayoutParams upLp = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.WRAP_CONTENT,
@@ -529,7 +590,11 @@ public class NetworkSpeedService extends Service {
             params.gravity = Gravity.TOP | Gravity.END;
             params.x = getClampedOverlayOffsetPx();
 
-            int pillHeightPx = dpToPx(24);
+            pill.measure(
+                View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED),
+                View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED)
+            );
+            int pillHeightPx = (pill.getMeasuredHeight() > 0) ? pill.getMeasuredHeight() : dpToPx(20);
             params.y = Math.max(0, (sbHeight - pillHeightPx) / 2);
 
             if (Build.VERSION.SDK_INT >= 28) {
@@ -560,7 +625,7 @@ public class NetworkSpeedService extends Service {
             int sbHeight = getStatusBarHeightPx();
             int pillHeightPx = (mOverlayPill != null && mOverlayPill.getHeight() > 0)
                 ? mOverlayPill.getHeight()
-                : dpToPx(24);
+                : dpToPx(20);
             mOverlayParams.x = getClampedOverlayOffsetPx();
             mOverlayParams.y = Math.max(0, (sbHeight - pillHeightPx) / 2);
             mOverlayParams.width = WindowManager.LayoutParams.WRAP_CONTENT;
@@ -917,6 +982,9 @@ public class NetworkSpeedService extends Service {
         sRunning = false;
         mHandler.removeCallbacks(mTickRunnable);
         removeOverlay();
+        try {
+            getContentResolver().unregisterContentObserver(mSettingsObserver);
+        } catch (Throwable ignored) {}
         if (mReceiverRegistered) {
             try {
                 unregisterReceiver(mScreenReceiver);

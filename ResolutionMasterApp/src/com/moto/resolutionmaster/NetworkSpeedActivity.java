@@ -127,15 +127,13 @@ public class NetworkSpeedActivity extends Activity {
         }
 
         if (sbNetSpeedOffset != null) {
-            sbNetSpeedOffset.setMax(225); // 15..240 dp
+            sbNetSpeedOffset.setMax(205); // 15..220 dp
             sbNetSpeedOffset.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
                 @Override
                 public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                     int dp = 15 + progress;
-                    int curProf = NetworkSpeedHelper.getResProfile(NetworkSpeedActivity.this);
-                    String profLabel = NetworkSpeedHelper.getResProfileLabel(curProf);
                     if (tvNetSpeedOffsetVal != null) {
-                        tvNetSpeedOffsetVal.setText(dp + " dp (" + profLabel + ")");
+                        tvNetSpeedOffsetVal.setText(dp + " dp");
                     }
                     if (fromUser) {
                         NetworkSpeedHelper.setOverlayOffsetDp(NetworkSpeedActivity.this, dp);
@@ -260,11 +258,9 @@ public class NetworkSpeedActivity extends Activity {
         if (layoutNetSpeedOffset != null) {
             layoutNetSpeedOffset.setVisibility(iconMode == NetworkSpeedHelper.ICON_MODE_RIGHT_OVERLAY ? View.VISIBLE : View.GONE);
         }
-        int profile = NetworkSpeedHelper.getResProfile(this);
-        String profLabel = NetworkSpeedHelper.getResProfileLabel(profile);
         int offsetDp = NetworkSpeedHelper.getOverlayOffsetDp(this);
         if (tvNetSpeedOffsetVal != null) {
-            tvNetSpeedOffsetVal.setText(offsetDp + " dp (" + profLabel + ")");
+            tvNetSpeedOffsetVal.setText(offsetDp + " dp");
         }
         if (sbNetSpeedOffset != null) {
             sbNetSpeedOffset.setProgress(Math.max(0, offsetDp - 15));
