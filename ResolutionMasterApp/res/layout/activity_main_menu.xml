@@ -170,15 +170,6 @@
                         android:textColor="@color/accent_green"
                         android:textSize="11sp"
                         android:layout_marginTop="2dp" />
-
-                    <TextView
-                        android:id="@+id/tv_menu_touch_status"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Отклик тача: 50% (Сток)"
-                        android:textColor="@color/accent_purple"
-                        android:textSize="11sp"
-                        android:layout_marginTop="2dp" />
                 </LinearLayout>
             </LinearLayout>
 
@@ -444,69 +435,6 @@
                     android:layout_marginTop="3dp"
                     android:text="AOD: 15 сек ✓"
                     android:textColor="@color/accent_purple"
-                    android:textSize="11sp"
-                    android:textStyle="bold" />
-            </LinearLayout>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:text="›"
-                android:textColor="@color/text_muted"
-                android:textSize="22sp" />
-        </LinearLayout>
-
-        <!-- 4. Touch Control Card -->
-        <LinearLayout
-            android:id="@+id/card_menu_touch"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
-            android:background="@drawable/card_bg"
-            android:clickable="true"
-            android:focusable="true"
-            android:gravity="center_vertical"
-            android:orientation="horizontal"
-            android:padding="14dp">
-
-            <ImageView
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:background="@drawable/btn_chip"
-                android:padding="9dp"
-                android:src="@drawable/ic_cat_touch" />
-
-            <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="14dp"
-                android:layout_weight="1"
-                android:orientation="vertical">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Отклик сенсора"
-                    android:textColor="@color/text_primary"
-                    android:textSize="15sp"
-                    android:textStyle="bold" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="2dp"
-                    android:text="Скорость указателя, сглаживание, Турбо-режим"
-                    android:textColor="@color/text_secondary"
-                    android:textSize="12sp" />
-
-                <TextView
-                    android:id="@+id/tv_sub_touch"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="3dp"
-                    android:text="Отклик: 50% (Сток)"
-                    android:textColor="@color/accent_yellow"
                     android:textSize="11sp"
                     android:textStyle="bold" />
             </LinearLayout>

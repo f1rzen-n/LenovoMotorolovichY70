@@ -64,12 +64,6 @@
             android:exported="true"
             android:configChanges="orientation|screenSize|screenLayout" />
 
-        <!-- Touch Control Activity -->
-        <activity
-            android:name=".TouchActivity"
-            android:exported="true"
-            android:configChanges="orientation|screenSize|screenLayout" />
-
         <!-- Power & Bypass Charging Activity -->
         <activity
             android:name=".PowerActivity"

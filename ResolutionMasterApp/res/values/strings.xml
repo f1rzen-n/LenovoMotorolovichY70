@@ -33,11 +33,11 @@
 
     <!-- Section 2: Refresh Rate -->
     <string name="section_fps_title">ЧАСТОТА ОБНОВЛЕНИЯ (ГЕРЦОВКА)</string>
-    <string name="section_fps_desc">Фиксация герцовки без просадок. Частота развертки экрана напрямую задает плавность анимаций и отклик сенсора.</string>
+    <string name="section_fps_desc">Фиксация герцовки без просадок. Частота развертки экрана напрямую задает плавность интерфейса и игр.</string>
 
     <string name="fps_144_title">144 Гц (Экстрим)</string>
     <string name="fps_144_badge">Гейминг • 144Hz</string>
-    <string name="fps_144_desc">Постоянные 144 Гц без падений. Максимальная плавность отображения и мгновенная регистрация касаний (задержка 0.66 мс).</string>
+    <string name="fps_144_desc">Постоянные 144 Гц без падений. Максимальная плавность отображения интерфейса и анимаций.</string>
     <string name="btn_fps_144">Зафиксировать 144 Гц</string>
 
     <string name="fps_120_title">120 Гц (Баланс)</string>
@@ -57,7 +57,7 @@
 
     <string name="fps_auto_title">Авто (Динамический)</string>
     <string name="fps_auto_badge">Адаптивный</string>
-    <string name="fps_auto_desc">Стандартный адаптивный режим: сброс до 60 Гц в покое и подъем до 144 Гц при касании.</string>
+    <string name="fps_auto_desc">Стандартный адаптивный режим: сброс до 60 Гц в покое и подъем до 144 Гц при взаимодействии.</string>
     <string name="btn_fps_auto">Включить Авто режим</string>
 
     <string name="toast_fps_applied">Установлена частота: %s</string>
@@ -113,19 +113,4 @@
     <string name="dialog_fps_copy">Скопировать команду ADB</string>
     <string name="dialog_fps_close">Понятно</string>
     <string name="toast_copied">Команда ADB скопирована в буфер обмена!</string>
-
-    <!-- Section: Touch Control -->
-    <string name="section_touch_title">⚡ Управление откликом сенсора (Тач)</string>
-    <string name="touch_badge">Goodix Touch • Турбо</string>
-    <string name="touch_desc" formatted="false">Аппаратный опрос сенсора Goodix: высокая точность при непрерывном ведении пальца и мгновенный отклик при касаниях.\n\nПолзунок регулирует системный фильтр сглаживания Android: 50% (сток) сглаживает естественное микро-дрожание рук, а 100% (турбо) убирает задержку для моментального отклика в играх.</string>
-    <string name="touch_speed_label">Чувствительность отклика:</string>
-    <string name="btn_touch_turbo" formatted="false">⚡ Турбо (100%)</string>
-    <string name="btn_touch_stock" formatted="false">⚖️ Сток (50%)</string>
-    <string name="btn_touch_game" formatted="false">🎮 Игра (85%)</string>
-    <string name="btn_apply_full_turbo">⚡ Включить Турбо-режим (144 Гц + Макс. отклик)</string>
-    <string name="btn_reset_full_stock" formatted="false">🔄 Сбросить к стоку (Авто Гц + Сток 50% + UI 1.0x)</string>
-    <string name="anim_boost_title">🚀 Ускорение системных анимаций (0.5x)</string>
-    <string name="anim_boost_desc">Снижает задержку системных переходов и окон в 2 раза, ускоряя визуальный отклик интерфейса.</string>
-    <string name="btn_anim_05">🚀 Ускорить (0.5x)</string>
-    <string name="btn_anim_10">🔄 Сток (1.0x)</string>
 </resources>

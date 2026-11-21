@@ -35,7 +35,6 @@ public class MainMenuActivity extends Activity {
     private TextView tvMenuFps;
     private TextView tvMenuShizuku;
     private TextView tvMenuSecure;
-    private TextView tvMenuTouchStatus;
 
     // HUD Row 2
     private TextView tvHudOled;
@@ -43,22 +42,20 @@ public class MainMenuActivity extends Activity {
     private TextView tvHudPower;
     private TextView tvHudNfc;
 
-    // 9 Category Cards
+    // Category Cards
     private LinearLayout cardMenuDisplay;
     private LinearLayout cardMenuEyecare;
     private LinearLayout cardMenuAod;
-    private LinearLayout cardMenuTouch;
     private LinearLayout cardMenuPower;
     private LinearLayout cardMenuNet;
     private LinearLayout cardMenuAudio;
     private LinearLayout cardMenuDebloat;
     private LinearLayout cardMenuNfc;
 
-    // 9 Subtitle Status TextViews
+    // Subtitle Status TextViews
     private TextView tvSubDisplay;
     private TextView tvSubEyecare;
     private TextView tvSubAod;
-    private TextView tvSubTouch;
     private TextView tvSubPower;
     private TextView tvSubNet;
     private TextView tvSubAudio;
@@ -69,7 +66,6 @@ public class MainMenuActivity extends Activity {
         new ContentObserver(new Handler(Looper.getMainLooper())) {
             @Override
             public void onChange(boolean selfChange, Uri uri) {
-                TouchSpeedHelper.invalidateCache();
                 updateStatus();
             }
         };
@@ -143,7 +139,6 @@ public class MainMenuActivity extends Activity {
         tvMenuFps = findViewById(R.id.tv_menu_fps);
         tvMenuShizuku = findViewById(R.id.tv_menu_shizuku);
         tvMenuSecure = findViewById(R.id.tv_menu_secure);
-        tvMenuTouchStatus = findViewById(R.id.tv_menu_touch_status);
 
         tvHudOled = findViewById(R.id.tv_hud_oled);
         tvHudAod = findViewById(R.id.tv_hud_aod);
@@ -154,7 +149,6 @@ public class MainMenuActivity extends Activity {
         cardMenuDisplay = findViewById(R.id.card_menu_display);
         cardMenuEyecare = findViewById(R.id.card_menu_eyecare);
         cardMenuAod = findViewById(R.id.card_menu_aod);
-        cardMenuTouch = findViewById(R.id.card_menu_touch);
         cardMenuPower = findViewById(R.id.card_menu_power);
         cardMenuNet = findViewById(R.id.card_menu_net);
         cardMenuAudio = findViewById(R.id.card_menu_audio);
@@ -165,7 +159,6 @@ public class MainMenuActivity extends Activity {
         tvSubDisplay = findViewById(R.id.tv_sub_display);
         tvSubEyecare = findViewById(R.id.tv_sub_eyecare);
         tvSubAod = findViewById(R.id.tv_sub_aod);
-        tvSubTouch = findViewById(R.id.tv_sub_touch);
         tvSubPower = findViewById(R.id.tv_sub_power);
         tvSubNet = findViewById(R.id.tv_sub_net);
         tvSubAudio = findViewById(R.id.tv_sub_audio);
@@ -204,17 +197,7 @@ public class MainMenuActivity extends Activity {
             });
         }
 
-        // 4. Touch
-        if (cardMenuTouch != null) {
-            cardMenuTouch.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    startActivity(new Intent(MainMenuActivity.this, TouchActivity.class));
-                }
-            });
-        }
-
-        // 5. Power
+        // 4. Power
         if (cardMenuPower != null) {
             cardMenuPower.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -341,14 +324,7 @@ public class MainMenuActivity extends Activity {
             }
         }
 
-        // 5. Touch Speed
-        int touchSpeed = TouchSpeedHelper.getPointerSpeed(this);
-        String touchLabel = TouchSpeedHelper.getSpeedLabel(touchSpeed);
-        if (tvMenuTouchStatus != null) {
-            tvMenuTouchStatus.setText("Отклик тача: " + touchLabel);
-        }
-
-        // 6. HUD Row 2: OLED / AOD / Power / NFC
+        // 5. HUD Row 2: OLED / AOD / Power / NFC
         boolean dcActive = EyeCareHelper.isDcDimmingActive(this);
         if (tvHudOled != null) {
             if (dcActive) {
@@ -409,10 +385,6 @@ public class MainMenuActivity extends Activity {
                 tvSubAod.setText("Режим: Заводской (Постоянный)");
                 tvSubAod.setTextColor(0xFF9E9E9E);
             }
-        }
-
-        if (tvSubTouch != null) {
-            tvSubTouch.setText("Отклик: " + touchLabel);
         }
 
         if (tvSubPower != null) {
