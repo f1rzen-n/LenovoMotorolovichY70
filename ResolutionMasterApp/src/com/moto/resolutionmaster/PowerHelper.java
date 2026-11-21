@@ -30,7 +30,40 @@ public class PowerHelper {
         return sp.getBoolean(KEY_BYPASS_ACTIVE, false);
     }
 
+    public static boolean setDirectPowerSupply(Context context, boolean enable) {
+        try {
+            Class<?> smClass = Class.forName("android.os.ServiceManager");
+            java.lang.reflect.Method getService = smClass.getMethod("getService", String.class);
+            android.os.IBinder baseBinder = (android.os.IBinder) getService.invoke(null, "moto_extend_service");
+            if (baseBinder != null) {
+                android.os.IBinder binderToUse;
+                if (ShellHelper.isShizukuPermissionGranted()) {
+                    binderToUse = new rikka.shizuku.ShizukuBinderWrapper(baseBinder);
+                } else {
+                    binderToUse = baseBinder;
+                }
+                android.os.Parcel data = android.os.Parcel.obtain();
+                android.os.Parcel reply = android.os.Parcel.obtain();
+                try {
+                    data.writeInterfaceToken("com.motorola.misc.IMotoExtendService");
+                    data.writeInt(enable ? 1 : 0);
+                    boolean ok = binderToUse.transact(21, data, reply, 0);
+                    reply.readException();
+                    Log.i(TAG, "IMotoExtendService.setDirectPowerSupplyStatus(" + enable + ")=" + ok);
+                    return ok;
+                } finally {
+                    data.recycle();
+                    reply.recycle();
+                }
+            }
+        } catch (Throwable t) {
+            Log.w(TAG, "Failed to call setDirectPowerSupplyStatus via Binder", t);
+        }
+        return false;
+    }
+
     public static boolean setBypassCharging(Context context, boolean enable) {
+        boolean hwOk = setDirectPowerSupply(context, enable);
         boolean ok;
         if (enable) {
             ok = ShellHelper.runCommand(context, "dumpsys battery unplug; echo 0 > /sys/class/power_supply/battery/charging_enabled 2>/dev/null");
@@ -40,7 +73,7 @@ public class PowerHelper {
 
         SharedPreferences sp = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
         sp.edit().putBoolean(KEY_BYPASS_ACTIVE, enable).apply();
-        return ok;
+        return hwOk || ok;
     }
 
     public static BatteryInfo getBatteryInfo(Context context) {

@@ -124,10 +124,13 @@ if res.returncode != 0:
     exit(1)
 
 # Copy final release artifact
-release_apk_v30 = os.path.join(base_dir, 'LenovoMotorolovichY70_v3.0.apk')
-shutil.copy2(signed_apk, release_apk_v30)
+release_apk_v31 = os.path.join(base_dir, 'LenovoMotorolovichY70_v3.1.apk')
+shutil.copy2(signed_apk, release_apk_v31)
+release_4pda = os.path.join(base_dir, '4pda_release', 'LenovoMotorolovichY70_v3.1.apk')
+os.makedirs(os.path.join(base_dir, '4pda_release'), exist_ok=True)
+shutil.copy2(signed_apk, release_4pda)
 
 print("\nSUCCESS! APK built and signed successfully at:")
 print(signed_apk)
-print("Release v3.0 copy created at:", release_apk_v30)
-print("APK file size:", os.path.getsize(release_apk_v30), "bytes")
+print("Release v3.1 copy created at:", release_apk_v31)
+print("APK file size:", os.path.getsize(release_apk_v31), "bytes")

@@ -565,15 +565,13 @@ public class NetworkSpeedService extends Service {
     }
 
     private int getTargetOverlayY(int pillHeightPx) {
-        int screenHeight = getScreenHeightPx();
-        // Mathematical optical alignment:
-        // The physical camera punch-hole on Lenovo Legion Y70 / Motorola Edge 70 Max is centered at
-        // physical Y ratio 0.0251f of the screen height (79.5px on 3168p, 59.6px on 2376p, 39.8px on 1584p).
-        // The system status bar icons (clock, battery, Wi-Fi, cellular) are permanently centered on this exact line.
-        // Therefore, centering the overlay pill on this horizontal axis ensures pixel-perfect vertical alignment
-        // across any resolution and any DPI value set by the user.
-        int iconCenterY = Math.round(screenHeight * 0.0251f);
+        int sbHeight = getStatusBarHeightPx();
         int userYOffsetPx = dpToPx(NetworkSpeedHelper.getOverlayOffsetYDp(this));
+        if (sbHeight > 0) {
+            return Math.max(0, (sbHeight - pillHeightPx) / 2 + userYOffsetPx);
+        }
+        int screenHeight = getScreenHeightPx();
+        int iconCenterY = Math.round(screenHeight * 0.0251f);
         return Math.max(0, iconCenterY - (pillHeightPx / 2) + userYOffsetPx);
     }
 

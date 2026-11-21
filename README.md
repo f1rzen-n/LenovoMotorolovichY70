@@ -2,11 +2,11 @@
   <img src="logo.png" width="128" height="128" alt="LenovoMotorolovichY70 Logo">
 </p>
 
-<h1 align="center">LenovoMotorolovichY70 v3.0</h1>
+<h1 align="center">LenovoMotorolovichY70 v3.1</h1>
 
 <p align="center">
   <a href="https://github.com/f1rzen-n"><img src="https://img.shields.io/badge/Author-nik.reneyj%20(@f1rzen--n)-blueviolet.svg" alt="Author"></a>
-  <a href="#"><img src="https://img.shields.io/badge/Version-v3.0-purple.svg" alt="Version"></a>
+  <a href="#"><img src="https://img.shields.io/badge/Version-v3.1-purple.svg" alt="Version"></a>
   <a href="#"><img src="https://img.shields.io/badge/Platform-Android%2012%2B-green.svg" alt="Platform"></a>
   <a href="#"><img src="https://img.shields.io/badge/Device-Lenovo%20Legion%20Y70%20%7C%20Moto%20Edge%2070%20Max-blue.svg" alt="Device"></a>
   <a href="#"><img src="https://img.shields.io/badge/SoC-Snapdragon%208%2B%20Gen%201-orange.svg" alt="SoC"></a>
@@ -23,7 +23,28 @@
 
 ---
 
-## Что нового в версии 3.0
+## Что нового в версии 3.1
+
+1. **Аппаратный обход зарядки (Hardware Direct Power Supply via `moto_extend_service`):**
+   * Прямой аппаратный вызов системного сервиса Motorola `IMotoExtendService.setDirectPowerSupplyStatus` (транзакция 21 через Binder/Shizuku).
+   * Питание устройства подается напрямую на материнскую плату от зарядного блока в обход аккумулятора, предотвращая нагрев и деградацию батареи во время игр и тяжелых задач.
+
+2. **Оптическое позиционирование индикатора скорости сети по вырезу камеры (Punch-Hole Alignment):**
+   * Расчет смещения индикатора по вертикали синхронизирован с реальной системной высотой статус-бара `getStatusBarHeightPx()`.
+   * Идеальное центрирование индикатора скорости сети напротив фронтальной камеры-островка на любых разрешениях (QHD+, FHD+, HD+) и нестандартных значениях DPI.
+
+3. **Честный контроль отклика сенсора и анимаций (Zero-Gimmick Touch Control):**
+   * Полное исключение любых фиктивных заявлений о разгоне частоты сенсора выше частоты VSYNC экрана.
+   * Проверенное и надежное управление системной скоростью считывания касаний (`pointer_speed`: 50% сток, 85% игровой, 100% турбо) и масштабом системных анимаций (0.5x / 1.0x).
+   * Кнопка «Турбо в 1 клик»: фиксация 144 Гц экрана, чувствительность 100% и ускорение UI в 2 раза (0.5x).
+
+4. **Полная очистка и оптимизация кодовой базы:**
+   * Удалены все экспериментальные и неподдерживаемые ядром заглушки.
+   * Чистый, надежный и стабильный релиз для прошивок ZUI и Motorola Hello UI / MyUX.
+
+---
+
+## Что было в версии 3.0
 
 1. **Умное затухание Always On Display (AOD Smart Fade):**
    * Автоматическое мягкое отключение AOD через настраиваемый интервал после блокировки устройства (**5, 10, 15, 30 или 60 секунд**).
