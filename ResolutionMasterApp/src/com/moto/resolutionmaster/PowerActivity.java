@@ -38,6 +38,20 @@ public class PowerActivity extends Activity {
     protected void onResume() {
         super.onResume();
         updateUI();
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                PowerHelper.refreshLiveBypassStatus(PowerActivity.this);
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (!isFinishing() && !isDestroyed()) {
+                            updateUI();
+                        }
+                    }
+                });
+            }
+        }).start();
     }
 
     private void setupControls() {
@@ -53,24 +67,33 @@ public class PowerActivity extends Activity {
                     final boolean cur = PowerHelper.isBypassChargingActive(PowerActivity.this);
                     final boolean target = !cur;
 
-                    if (target && !ShellHelper.isShizukuPermissionGranted() && !ShellHelper.isRootAvailable()) {
-                        Toast.makeText(PowerActivity.this, "Для сквозной зарядки (Bypass) требуется Shizuku или Root", Toast.LENGTH_SHORT).show();
-                        return;
-                    }
-
                     btnToggleBypassCharging.setEnabled(false);
                     btnToggleBypassCharging.setText("⏳ Переключение режима...");
 
                     new Thread(new Runnable() {
                         @Override
                         public void run() {
-                            PowerHelper.setBypassCharging(PowerActivity.this, target);
+                            if (target && !ShellHelper.isShizukuPermissionGranted() && !ShellHelper.isRootAvailable()) {
+                                runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        if (isFinishing() || isDestroyed()) return;
+                                        btnToggleBypassCharging.setEnabled(true);
+                                        updateUI();
+                                        Toast.makeText(PowerActivity.this, "Для сквозной зарядки (Bypass) требуется Shizuku или Root", Toast.LENGTH_SHORT).show();
+                                    }
+                                });
+                                return;
+                            }
+
+                            final boolean ok = PowerHelper.setBypassCharging(PowerActivity.this, target);
                             runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
+                                    if (isFinishing() || isDestroyed()) return;
                                     btnToggleBypassCharging.setEnabled(true);
                                     updateUI();
-                                    if (target) {
+                                    if (target && ok) {
                                         new AlertDialog.Builder(PowerActivity.this)
                                             .setTitle("Сквозное питание активно! ⚡")
                                             .setMessage("Смартфон переведен на прямое питание от зарядного устройства.\n\n" +
@@ -79,6 +102,14 @@ public class PowerActivity extends Activity {
                                                 "• Идеально для тяжелых игр и длительных сессий\n\n" +
                                                 "Для возврата к обычному режиму нажмите «Отключить Bypass».")
                                             .setPositiveButton("Отлично", null)
+                                            .show();
+                                    } else if (target) {
+                                        new AlertDialog.Builder(PowerActivity.this)
+                                            .setTitle("Требуется Root или системный режим")
+                                            .setMessage("На этой прошивке аппаратное сквозное питание (moto_extend_service) защищено системной подписью и недоступно обычным приложениям и Shizuku без Root.\n\n" +
+                                                "• С Root (KernelSU / Magisk): обход зарядки работает прямо отсюда.\n" +
+                                                "• Без Root: используйте штатный переключатель обхода зарядки в боковой панели Motorola Gametime.")
+                                            .setPositiveButton("Понятно", null)
                                             .show();
                                     } else {
                                         Toast.makeText(PowerActivity.this, "Сквозное питание отключено. Стандартная зарядка возобновлена.", Toast.LENGTH_SHORT).show();

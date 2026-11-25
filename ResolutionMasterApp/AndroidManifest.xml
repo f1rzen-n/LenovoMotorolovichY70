@@ -1,7 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.moto.resolutionmaster"
-    android:versionCode="31"
-    android:versionName="3.1">
+    android:versionCode="32"
+    android:versionName="3.2">
 
     <uses-sdk android:minSdkVersion="26" android:targetSdkVersion="34" />
 
@@ -43,49 +43,49 @@
         <!-- Display Settings Activity -->
         <activity
             android:name=".MainActivity"
-            android:exported="true"
+            android:exported="false"
             android:configChanges="orientation|screenSize|screenLayout" />
 
         <!-- Debloater & APK Disabler Activity -->
         <activity
             android:name=".DebloatActivity"
-            android:exported="true"
+            android:exported="false"
             android:configChanges="orientation|screenSize|screenLayout" />
 
         <!-- Eye Care & DC Dimming Activity -->
         <activity
             android:name=".EyeCareActivity"
-            android:exported="true"
+            android:exported="false"
             android:configChanges="orientation|screenSize|screenLayout" />
 
         <!-- Always On Display Activity -->
         <activity
             android:name=".AodActivity"
-            android:exported="true"
+            android:exported="false"
             android:configChanges="orientation|screenSize|screenLayout" />
 
         <!-- Power & Bypass Charging Activity -->
         <activity
             android:name=".PowerActivity"
-            android:exported="true"
+            android:exported="false"
             android:configChanges="orientation|screenSize|screenLayout" />
 
         <!-- Network Speed Status Bar Activity -->
         <activity
             android:name=".NetworkSpeedActivity"
-            android:exported="true"
+            android:exported="false"
             android:configChanges="orientation|screenSize|screenLayout" />
 
         <!-- Audio & Dolby Atmos Activity -->
         <activity
             android:name=".AudioActivity"
-            android:exported="true"
+            android:exported="false"
             android:configChanges="orientation|screenSize|screenLayout" />
 
         <!-- NFC Fix Activity -->
         <activity
             android:name=".NfcFixActivity"
-            android:exported="true"
+            android:exported="false"
             android:configChanges="orientation|screenSize|screenLayout" />
 
         <!-- Shizuku Provider and Client V3 Support -->

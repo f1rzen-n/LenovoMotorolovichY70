@@ -25,6 +25,10 @@ public class ResolutionTileService extends TileService {
     public void onClick() {
         super.onClick();
 
+        if (!ShellHelper.hasWriteSecureSettings(this)) {
+            ShellHelper.grantWriteSecureSettings(this);
+        }
+
         // 1. Gently collapse status bar to prevent SystemUI freeze / sticking in Modern QS style
         try {
             ShellHelper.runCommand(this, "cmd statusbar collapse");
@@ -34,10 +38,10 @@ public class ResolutionTileService extends TileService {
         Point p = DisplayManagerHelper.getCurrentResolution(this);
         int minRes = Math.min(p.x, p.y);
 
-        android.content.SharedPreferences prefs = getSharedPreferences("resolution_master_prefs", MODE_PRIVATE);
-        int fhdDpi = prefs.getInt("selected_fhd_dpi", DisplayManagerHelper.FHD_DENSITY);
-        int hdDpi = prefs.getInt("selected_hd_dpi", DisplayManagerHelper.HD_DENSITY);
-        int qhdDpi = prefs.getInt("selected_qhd_dpi", DisplayManagerHelper.NATIVE_DENSITY);
+        android.content.SharedPreferences prefs = getSharedPreferences(DisplayManagerHelper.PREFS_DPI, MODE_PRIVATE);
+        int fhdDpi = prefs.getInt(DisplayManagerHelper.KEY_FHD_DPI, DisplayManagerHelper.FHD_DENSITY);
+        int hdDpi = prefs.getInt(DisplayManagerHelper.KEY_HD_DPI, DisplayManagerHelper.HD_DENSITY);
+        int qhdDpi = prefs.getInt(DisplayManagerHelper.KEY_QHD_DPI, DisplayManagerHelper.NATIVE_DENSITY);
 
         if (minRes > 1080) {
             // Currently QHD+ (1440p) -> switch to FHD+ (1080p)
@@ -78,9 +82,11 @@ public class ResolutionTileService extends TileService {
         String subtitle;
 
         if (minRes > 1080) {
+            float cfgHz = DisplayManagerHelper.getConfiguredRefreshRate(this);
+            int hzLabel = cfgHz > 0 ? Math.round(cfgHz) : Math.round(DisplayManagerHelper.getCurrentRefreshRate(this));
             modeText = "QHD";
             label = "QHD+";
-            subtitle = "1440p • 144Hz";
+            subtitle = "1440p • " + hzLabel + "Hz";
         } else if (minRes > 720) {
             modeText = "FHD";
             label = "FHD+";

@@ -64,45 +64,43 @@ public class ShellHelper {
         return false;
     }
 
+    private static volatile long sLastRootCheckMs = 0L;
+    private static volatile boolean sLastRootResult = false;
+
     public static String runCommandWithOutput(Context context, String cmd) {
         if (cmd == null || cmd.trim().isEmpty()) {
             return "";
         }
-        StringBuilder output = new StringBuilder();
 
-        // 1. Try Shizuku IPC
-        if (isShizukuPermissionGranted()) {
+        // 1. Try Root first (consistent with runCommand priority)
+        if (isRootAvailable()) {
+            java.lang.Process p = null;
             try {
-                Method newProcessMethod = Shizuku.class.getDeclaredMethod("newProcess", String[].class, String[].class, String.class);
-                newProcessMethod.setAccessible(true);
-                java.lang.Process p = (java.lang.Process) newProcessMethod.invoke(null, new String[]{"sh", "-c", cmd}, null, null);
-                if (p != null) {
-                    java.io.BufferedReader reader = new java.io.BufferedReader(new java.io.InputStreamReader(p.getInputStream(), java.nio.charset.StandardCharsets.UTF_8));
-                    String line;
-                    while ((line = reader.readLine()) != null) {
-                        output.append(line).append("\n");
-                    }
-                    p.waitFor();
-                    return output.toString();
+                p = Runtime.getRuntime().exec(new String[]{"su", "-c", cmd});
+                String out = readAllAndWait(p);
+                if (out != null) {
+                    return out;
                 }
             } catch (Throwable t) {
-                Log.e(TAG, "runCommandWithOutput Shizuku error", t);
+                Log.e(TAG, "runCommandWithOutput Root error", t);
+                destroyQuietly(p);
             }
         }
 
-        // 2. Try Root
-        if (isRootAvailable()) {
+        // 2. Try Shizuku IPC
+        if (isShizukuPermissionGranted()) {
+            java.lang.Process p = null;
             try {
-                java.lang.Process p = Runtime.getRuntime().exec(new String[]{"su", "-c", cmd});
-                java.io.BufferedReader reader = new java.io.BufferedReader(new java.io.InputStreamReader(p.getInputStream(), java.nio.charset.StandardCharsets.UTF_8));
-                String line;
-                while ((line = reader.readLine()) != null) {
-                    output.append(line).append("\n");
+                p = startShizukuProcess(cmd);
+                if (p != null) {
+                    String out = readAllAndWait(p);
+                    if (out != null) {
+                        return out;
+                    }
                 }
-                p.waitFor();
-                return output.toString();
             } catch (Throwable t) {
-                Log.e(TAG, "runCommandWithOutput Root error", t);
+                Log.e(TAG, "runCommandWithOutput Shizuku error", t);
+                destroyQuietly(p);
             }
         }
 
@@ -110,11 +108,22 @@ public class ShellHelper {
     }
 
     public static boolean isRootAvailable() {
+        long now = android.os.SystemClock.elapsedRealtime();
+        if (sLastRootCheckMs > 0 && (now - sLastRootCheckMs) < 5000L) {
+            return sLastRootResult;
+        }
+        java.lang.Process p = null;
         try {
-            java.lang.Process p = Runtime.getRuntime().exec(new String[]{"su", "-c", "id"});
-            int exit = p.waitFor();
-            return exit == 0;
+            p = Runtime.getRuntime().exec(new String[]{"su", "-c", "id"});
+            readAllAndWait(p);
+            boolean ok = p.exitValue() == 0;
+            sLastRootResult = ok;
+            sLastRootCheckMs = now;
+            return ok;
         } catch (Throwable t) {
+            destroyQuietly(p);
+            sLastRootResult = false;
+            sLastRootCheckMs = now;
             return false;
         }
     }
@@ -159,35 +168,37 @@ public class ShellHelper {
 
         // 1. Try Shizuku process stdin
         if (isShizukuPermissionGranted()) {
+            java.lang.Process p = null;
             try {
-                Method newProcessMethod = Shizuku.class.getDeclaredMethod("newProcess", String[].class, String[].class, String.class);
-                newProcessMethod.setAccessible(true);
-                java.lang.Process p = (java.lang.Process) newProcessMethod.invoke(null, new String[]{"sh", "-c", "cat > " + targetPath + " && chmod 644 " + targetPath}, null, null);
+                p = startShizukuProcess("cat > " + targetPath + " && chmod 644 " + targetPath);
                 if (p != null) {
                     java.io.OutputStream os = p.getOutputStream();
                     os.write(data);
                     os.flush();
                     os.close();
-                    int exit = p.waitFor();
-                    if (exit == 0) return true;
+                    readAllAndWait(p);
+                    if (p.exitValue() == 0) return true;
                 }
             } catch (Throwable t) {
                 Log.e(TAG, "writeShellFile Shizuku stdin error", t);
+                destroyQuietly(p);
             }
         }
 
         // 2. Try Root process stdin
         if (isRootAvailable()) {
+            java.lang.Process p = null;
             try {
-                java.lang.Process p = Runtime.getRuntime().exec(new String[]{"su", "-c", "cat > " + targetPath + " && chmod 644 " + targetPath});
+                p = Runtime.getRuntime().exec(new String[]{"su", "-c", "cat > " + targetPath + " && chmod 644 " + targetPath});
                 java.io.OutputStream os = p.getOutputStream();
                 os.write(data);
                 os.flush();
                 os.close();
-                int exit = p.waitFor();
-                if (exit == 0) return true;
+                readAllAndWait(p);
+                if (p.exitValue() == 0) return true;
             } catch (Throwable t) {
                 Log.e(TAG, "writeShellFile Root stdin error", t);
+                destroyQuietly(p);
             }
         }
 
@@ -216,21 +227,22 @@ public class ShellHelper {
     }
 
     public static boolean runShizuku(String cmd) {
+        java.lang.Process p = null;
         try {
             if (!isShizukuPermissionGranted()) {
                 Log.w(TAG, "runShizuku: permission not granted");
                 return false;
             }
-            Method newProcessMethod = Shizuku.class.getDeclaredMethod("newProcess", String[].class, String[].class, String.class);
-            newProcessMethod.setAccessible(true);
-            java.lang.Process p = (java.lang.Process) newProcessMethod.invoke(null, new String[]{"sh", "-c", cmd}, null, null);
+            p = startShizukuProcess(cmd);
             if (p != null) {
-                int exit = p.waitFor();
+                readAllAndWait(p);
+                int exit = p.exitValue();
                 Log.d(TAG, "runShizuku exited with code: " + exit + " for cmd: " + cmd);
                 return exit == 0;
             }
         } catch (Throwable t) {
             Log.e(TAG, "Failed to run command via Shizuku", t);
+            destroyQuietly(p);
         }
         return false;
     }
@@ -258,12 +270,49 @@ public class ShellHelper {
     }
 
     private static boolean runRoot(String cmd) {
+        java.lang.Process p = null;
         try {
-            java.lang.Process p = Runtime.getRuntime().exec(new String[]{"su", "-c", cmd});
-            int exit = p.waitFor();
-            return exit == 0;
+            p = Runtime.getRuntime().exec(new String[]{"su", "-c", cmd});
+            readAllAndWait(p);
+            boolean ok = p.exitValue() == 0;
+            if (!ok) sLastRootCheckMs = 0L;
+            return ok;
         } catch (Throwable t) {
+            destroyQuietly(p);
             return false;
+        }
+    }
+
+    private static java.lang.Process startShizukuProcess(String cmd) throws Exception {
+        Method newProcessMethod = Shizuku.class.getDeclaredMethod("newProcess", String[].class, String[].class, String.class);
+        newProcessMethod.setAccessible(true);
+        return (java.lang.Process) newProcessMethod.invoke(null, new String[]{"sh", "-c", cmd}, null, null);
+    }
+
+    private static String readAllAndWait(java.lang.Process p) throws Exception {
+        StringBuilder output = new StringBuilder();
+        try (java.io.BufferedReader reader = new java.io.BufferedReader(
+                new java.io.InputStreamReader(p.getInputStream(), java.nio.charset.StandardCharsets.UTF_8));
+             java.io.InputStream err = p.getErrorStream();
+             java.io.OutputStream out = p.getOutputStream()) {
+            // Drain stdout
+            String line;
+            while ((line = reader.readLine()) != null) {
+                output.append(line).append("\n");
+            }
+            // Drain stderr so child never deadlocks on full pipe buffer
+            byte[] errBuf = new byte[1024];
+            while (err.read(errBuf) != -1) {
+                // discard or log if needed
+            }
+        }
+        p.waitFor();
+        return output.toString();
+    }
+
+    private static void destroyQuietly(java.lang.Process p) {
+        if (p != null) {
+            try { p.destroy(); } catch (Throwable ignored) {}
         }
     }
 

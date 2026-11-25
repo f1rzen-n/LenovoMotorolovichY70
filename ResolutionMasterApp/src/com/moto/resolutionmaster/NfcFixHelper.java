@@ -140,6 +140,18 @@ public class NfcFixHelper {
         return info.status == NfcStatus.FIXED_100_PERCENT;
     }
 
+    private static byte[] readAssetBytes(Context context, String assetName) throws java.io.IOException {
+        try (InputStream is = context.getAssets().open(assetName);
+             java.io.ByteArrayOutputStream baos = new java.io.ByteArrayOutputStream()) {
+            byte[] chunk = new byte[8192];
+            int n;
+            while ((n = is.read(chunk)) != -1) {
+                baos.write(chunk, 0, n);
+            }
+            return baos.toByteArray();
+        }
+    }
+
     public static boolean extractDexHelper(Context context) {
         try {
             // First check if already on device with valid size
@@ -154,16 +166,7 @@ public class NfcFixHelper {
                 } catch (Throwable ignored) {}
             }
 
-            InputStream is = context.getAssets().open("nfc-fix.dex");
-            byte[] buf = new byte[is.available()];
-            int read = 0;
-            while (read < buf.length) {
-                int r = is.read(buf, read, buf.length - read);
-                if (r == -1) break;
-                read += r;
-            }
-            is.close();
-
+            byte[] buf = readAssetBytes(context, "nfc-fix.dex");
             boolean ok = ShellHelper.writeShellFile(context, buf, DEX_TARGET);
             Log.i(TAG, "extractDexHelper write result: " + ok);
             return ok;
@@ -249,12 +252,7 @@ public class NfcFixHelper {
 
             File targetZip = useTemp ? tempFile : zipFile;
 
-            // Extract dex helper bytes
-            byte[] dexBytes;
-            try (InputStream is = context.getAssets().open("nfc-fix.dex")) {
-                dexBytes = new byte[is.available()];
-                is.read(dexBytes);
-            }
+            byte[] dexBytes = readAssetBytes(context, "nfc-fix.dex");
 
             String moduleProp = 
                 "id=" + MODULE_ID + "\n" +
@@ -348,11 +346,7 @@ public class NfcFixHelper {
 
             File targetZip = useTemp ? tempFile : zipFile;
 
-            byte[] dexBytes;
-            try (InputStream is = context.getAssets().open("nfc-fix.dex")) {
-                dexBytes = new byte[is.available()];
-                is.read(dexBytes);
-            }
+            byte[] dexBytes = readAssetBytes(context, "nfc-fix.dex");
 
             String rollbackScript = 
                 "#!/sbin/sh\n" +

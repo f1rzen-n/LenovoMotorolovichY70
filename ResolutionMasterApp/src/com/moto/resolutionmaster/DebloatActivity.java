@@ -77,18 +77,22 @@ public class DebloatActivity extends Activity {
         layoutManualTab = findViewById(R.id.layout_manual_tab);
 
         // Tab Switching
-        btnTabPreset.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                switchTab(true);
-            }
-        });
-        btnTabManual.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                switchTab(false);
-            }
-        });
+        if (btnTabPreset != null) {
+            btnTabPreset.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    switchTab(true);
+                }
+            });
+        }
+        if (btnTabManual != null) {
+            btnTabManual.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    switchTab(false);
+                }
+            });
+        }
 
         // Preset Init
         btnPresetAuthor = findViewById(R.id.btn_preset_author);
@@ -135,19 +139,23 @@ public class DebloatActivity extends Activity {
         if (btnPresetBalanced != null) btnPresetBalanced.setOnClickListener(presetTabClick);
         if (btnPresetMinimal != null) btnPresetMinimal.setOnClickListener(presetTabClick);
 
-        btnPresetApplyAll.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                confirmBatchPreset(true);
-            }
-        });
+        if (btnPresetApplyAll != null) {
+            btnPresetApplyAll.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    confirmBatchPreset(true);
+                }
+            });
+        }
 
-        btnPresetEnableAll.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                confirmBatchPreset(false);
-            }
-        });
+        if (btnPresetEnableAll != null) {
+            btnPresetEnableAll.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    confirmBatchPreset(false);
+                }
+            });
+        }
 
         Button btnDebloatRollback = findViewById(R.id.btn_debloat_rollback);
         if (btnDebloatRollback != null) {
@@ -276,94 +284,132 @@ public class DebloatActivity extends Activity {
             .show();
     }
 
+    private int mPresetLoadGen = 0;
+
+    private static class PresetRowState {
+        final DebloatPreset.PresetItem item;
+        final boolean installed;
+        final boolean enabled;
+        final boolean isProtected;
+
+        PresetRowState(DebloatPreset.PresetItem item, boolean installed, boolean enabled, boolean isProtected) {
+            this.item = item;
+            this.installed = installed;
+            this.enabled = enabled;
+            this.isProtected = isProtected;
+        }
+    }
+
     private void refreshPresetList() {
         if (llPresetContainer == null) return;
-        llPresetContainer.removeAllViews();
-
         updatePresetTabButtons();
 
-        List<DebloatPreset.PresetItem> items = DebloatPreset.getPresetList(currentPresetType);
-        int total = items.size();
-        int disabledCount = 0;
-        LayoutInflater inflater = LayoutInflater.from(this);
+        final int gen = ++mPresetLoadGen;
+        final int presetType = currentPresetType;
 
-        for (final DebloatPreset.PresetItem item : items) {
-            final boolean installed = PackageHelper.isPackageInstalled(this, item.packageName);
-            final boolean enabled = installed && PackageHelper.isPackageEnabled(this, item.packageName);
-
-            if (!enabled) {
-                disabledCount++;
-            }
-
-            View row = inflater.inflate(R.layout.item_preset_app, llPresetContainer, false);
-            TextView tvTitle = row.findViewById(R.id.tv_preset_title);
-            TextView tvPkg = row.findViewById(R.id.tv_preset_pkg);
-            TextView tvDesc = row.findViewById(R.id.tv_preset_desc);
-            TextView tvCat = row.findViewById(R.id.tv_preset_category);
-            TextView tvStatus = row.findViewById(R.id.tv_preset_status);
-            final Button btnToggle = row.findViewById(R.id.btn_preset_toggle);
-
-            tvTitle.setText(item.title);
-            tvPkg.setText(item.packageName);
-            tvDesc.setText(item.description);
-            tvCat.setText(item.category);
-
-            final boolean isProtected = PackageHelper.isProtectedOrNonDisable(item.packageName);
-
-            if (!installed) {
-                tvStatus.setText("Не установлен / Удален");
-                tvStatus.setTextColor(0xFF6B7280);
-                btnToggle.setVisibility(View.GONE);
-            } else if (!enabled) {
-                if (isProtected) {
-                    tvStatus.setText("Заморожено (AppOps) ✓");
-                } else {
-                    tvStatus.setText("Отключено ✓");
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                final List<DebloatPreset.PresetItem> items = DebloatPreset.getPresetList(presetType);
+                final List<PresetRowState> states = new ArrayList<>(items.size());
+                int disabled = 0;
+                for (DebloatPreset.PresetItem item : items) {
+                    boolean installed = PackageHelper.isPackageInstalled(DebloatActivity.this, item.packageName);
+                    boolean enabled = installed && PackageHelper.isPackageEnabled(DebloatActivity.this, item.packageName);
+                    boolean isProtected = PackageHelper.isProtectedOrNonDisable(item.packageName);
+                    if (!enabled) disabled++;
+                    states.add(new PresetRowState(item, installed, enabled, isProtected));
                 }
-                tvStatus.setTextColor(0xFF10B981); // accent_green
-                btnToggle.setText("Включить");
-                btnToggle.setBackgroundResource(R.drawable.btn_green);
-            } else {
-                tvStatus.setText("Активно");
-                tvStatus.setTextColor(0xFFF59E0B); // accent_yellow
-                btnToggle.setText(isProtected ? "Заморозить" : "Отключить");
-                btnToggle.setBackgroundResource(R.drawable.btn_red);
-            }
+                final int total = items.size();
+                final int disabledCount = disabled;
 
-            btnToggle.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (enabled) {
-                        boolean ok = PackageHelper.disablePackage(DebloatActivity.this, item.packageName);
-                        if (ok) {
-                            String msg = isProtected ?
-                                item.title + " заморожен в фоне (AppOps)" :
-                                item.title + " отключен";
-                            Toast.makeText(DebloatActivity.this, msg, Toast.LENGTH_SHORT).show();
-                        } else {
-                            Toast.makeText(DebloatActivity.this, "Ошибка (требуются права Shizuku/Root)", Toast.LENGTH_SHORT).show();
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (isFinishing() || isDestroyed() || gen != mPresetLoadGen) return;
+                        llPresetContainer.removeAllViews();
+                        LayoutInflater inflater = LayoutInflater.from(DebloatActivity.this);
+
+                        for (final PresetRowState st : states) {
+                            final DebloatPreset.PresetItem item = st.item;
+                            View row = inflater.inflate(R.layout.item_preset_app, llPresetContainer, false);
+                            TextView tvTitle = row.findViewById(R.id.tv_preset_title);
+                            TextView tvPkg = row.findViewById(R.id.tv_preset_pkg);
+                            TextView tvDesc = row.findViewById(R.id.tv_preset_desc);
+                            TextView tvCat = row.findViewById(R.id.tv_preset_category);
+                            TextView tvStatus = row.findViewById(R.id.tv_preset_status);
+                            final Button btnToggle = row.findViewById(R.id.btn_preset_toggle);
+
+                            tvTitle.setText(item.title);
+                            tvPkg.setText(item.packageName);
+                            tvDesc.setText(item.description);
+                            tvCat.setText(item.category);
+
+                            if (!st.installed) {
+                                tvStatus.setText("Не установлен / Удален");
+                                tvStatus.setTextColor(0xFF6B7280);
+                                btnToggle.setVisibility(View.GONE);
+                            } else if (!st.enabled) {
+                                tvStatus.setText(st.isProtected ? "Заморожено (AppOps) ✓" : "Отключено ✓");
+                                tvStatus.setTextColor(0xFF10B981);
+                                btnToggle.setText("Включить");
+                                btnToggle.setBackgroundResource(R.drawable.btn_green);
+                            } else {
+                                tvStatus.setText("Активно");
+                                tvStatus.setTextColor(0xFFF59E0B);
+                                btnToggle.setText(st.isProtected ? "Заморозить" : "Отключить");
+                                btnToggle.setBackgroundResource(R.drawable.btn_red);
+                            }
+
+                            btnToggle.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    btnToggle.setEnabled(false);
+                                    btnToggle.setText("...");
+                                    new Thread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            final boolean ok = st.enabled
+                                                ? PackageHelper.disablePackage(DebloatActivity.this, item.packageName)
+                                                : PackageHelper.enablePackage(DebloatActivity.this, item.packageName);
+                                            runOnUiThread(new Runnable() {
+                                                @Override
+                                                public void run() {
+                                                    if (isFinishing() || isDestroyed()) return;
+                                                    if (ok) {
+                                                        String msg;
+                                                        if (st.enabled) {
+                                                            msg = st.isProtected ?
+                                                                item.title + " заморожен в фоне (AppOps)" :
+                                                                item.title + " отключен";
+                                                        } else {
+                                                            msg = item.title + " включен";
+                                                        }
+                                                        Toast.makeText(DebloatActivity.this, msg, Toast.LENGTH_SHORT).show();
+                                                    } else {
+                                                        Toast.makeText(DebloatActivity.this, "Ошибка (требуются права Shizuku/Root)", Toast.LENGTH_SHORT).show();
+                                                    }
+                                                    refreshPresetList();
+                                                }
+                                            });
+                                        }
+                                    }).start();
+                                }
+                            });
+
+                            llPresetContainer.addView(row);
                         }
-                    } else {
-                        boolean ok = PackageHelper.enablePackage(DebloatActivity.this, item.packageName);
-                        if (ok) {
-                            Toast.makeText(DebloatActivity.this, item.title + " включен", Toast.LENGTH_SHORT).show();
-                        } else {
-                            Toast.makeText(DebloatActivity.this, "Ошибка (требуются права Shizuku/Root)", Toast.LENGTH_SHORT).show();
+
+                        if (tvPresetCounter != null) {
+                            tvPresetCounter.setText("Отключено: " + disabledCount + " из " + total + " пакетов пресета ✓");
+                        }
+                        if (btnPresetApplyAll != null) {
+                            btnPresetApplyAll.setText("🚫 Применить пресет (" + total + ")");
                         }
                     }
-                    refreshPresetList();
-                }
-            });
-
-            llPresetContainer.addView(row);
-        }
-
-        if (tvPresetCounter != null) {
-            tvPresetCounter.setText("Отключено: " + disabledCount + " из " + total + " пакетов пресета ✓");
-        }
-        if (btnPresetApplyAll != null) {
-            btnPresetApplyAll.setText("🚫 Применить пресет (" + total + ")");
-        }
+                });
+            }
+        }).start();
     }
 
     private void confirmBatchPreset(final boolean applyPreset) {
@@ -655,20 +701,28 @@ public class DebloatActivity extends Activity {
                         appListAdapter = new AppListAdapter(DebloatActivity.this, installedApps, new AppListAdapter.OnAppToggleListener() {
                             @Override
                             public void onToggle(final AppInfo app, final boolean enable) {
-                                boolean ok;
-                                if (enable) {
-                                    ok = PackageHelper.enablePackage(DebloatActivity.this, app.packageName);
-                                } else {
-                                    ok = PackageHelper.disablePackage(DebloatActivity.this, app.packageName);
-                                }
-                                if (ok) {
-                                    app.isEnabled = enable;
-                                    appListAdapter.notifyDataSetChanged();
-                                    String state = enable ? "включено" : "отключено";
-                                    Toast.makeText(DebloatActivity.this, app.label + " " + state, Toast.LENGTH_SHORT).show();
-                                } else {
-                                    Toast.makeText(DebloatActivity.this, "Ошибка! Проверьте Shizuku/Root", Toast.LENGTH_SHORT).show();
-                                }
+                                new Thread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        final boolean ok = enable
+                                            ? PackageHelper.enablePackage(DebloatActivity.this, app.packageName)
+                                            : PackageHelper.disablePackage(DebloatActivity.this, app.packageName);
+                                        runOnUiThread(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                if (isFinishing() || isDestroyed()) return;
+                                                if (ok) {
+                                                    app.isEnabled = enable;
+                                                    appListAdapter.notifyDataSetChanged();
+                                                    String state = enable ? "включено" : "отключено";
+                                                    Toast.makeText(DebloatActivity.this, app.label + " " + state, Toast.LENGTH_SHORT).show();
+                                                } else {
+                                                    Toast.makeText(DebloatActivity.this, "Ошибка! Проверьте Shizuku/Root", Toast.LENGTH_SHORT).show();
+                                                }
+                                            }
+                                        });
+                                    }
+                                }).start();
                             }
                         });
 

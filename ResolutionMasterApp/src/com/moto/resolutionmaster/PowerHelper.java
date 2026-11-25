@@ -30,24 +30,23 @@ public class PowerHelper {
         return sp.getBoolean(KEY_BYPASS_ACTIVE, false);
     }
 
+    private static final android.os.IBinder sDpsToken = new android.os.Binder();
+
     public static boolean setDirectPowerSupply(Context context, boolean enable) {
+        DisplayManagerHelper.bypassHiddenApi(context);
         try {
             Class<?> smClass = Class.forName("android.os.ServiceManager");
             java.lang.reflect.Method getService = smClass.getMethod("getService", String.class);
             android.os.IBinder baseBinder = (android.os.IBinder) getService.invoke(null, "moto_extend_service");
             if (baseBinder != null) {
-                android.os.IBinder binderToUse;
-                if (ShellHelper.isShizukuPermissionGranted()) {
-                    binderToUse = new rikka.shizuku.ShizukuBinderWrapper(baseBinder);
-                } else {
-                    binderToUse = baseBinder;
-                }
                 android.os.Parcel data = android.os.Parcel.obtain();
                 android.os.Parcel reply = android.os.Parcel.obtain();
                 try {
                     data.writeInterfaceToken("com.motorola.misc.IMotoExtendService");
                     data.writeInt(enable ? 1 : 0);
-                    boolean ok = binderToUse.transact(21, data, reply, 0);
+                    data.writeStrongBinder(sDpsToken);
+                    // TRANSACTION_setDirectPowerSupplyStatus = 24
+                    boolean ok = baseBinder.transact(24, data, reply, 0);
                     reply.readException();
                     Log.i(TAG, "IMotoExtendService.setDirectPowerSupplyStatus(" + enable + ")=" + ok);
                     return ok;
@@ -64,16 +63,50 @@ public class PowerHelper {
 
     public static boolean setBypassCharging(Context context, boolean enable) {
         boolean hwOk = setDirectPowerSupply(context, enable);
-        boolean ok;
-        if (enable) {
-            ok = ShellHelper.runCommand(context, "dumpsys battery unplug; echo 0 > /sys/class/power_supply/battery/charging_enabled 2>/dev/null");
-        } else {
-            ok = ShellHelper.runCommand(context, "dumpsys battery reset; echo 1 > /sys/class/power_supply/battery/charging_enabled 2>/dev/null");
+        boolean sysfsOk = false;
+        if (!hwOk && ShellHelper.isRootAvailable()) {
+            if (enable) {
+                sysfsOk = ShellHelper.runCommand(context,
+                    "if [ -w /sys/class/power_supply/battery/charging_enabled ]; then echo 0 > /sys/class/power_supply/battery/charging_enabled; " +
+                    "elif [ -w /sys/class/power_supply/battery/input_suspend ]; then echo 1 > /sys/class/power_supply/battery/input_suspend; " +
+                    "elif [ -w /sys/class/qcom-battery/charging_enabled ]; then echo 0 > /sys/class/qcom-battery/charging_enabled; " +
+                    "else exit 1; fi");
+            } else {
+                sysfsOk = ShellHelper.runCommand(context,
+                    "dumpsys battery reset; " +
+                    "if [ -w /sys/class/power_supply/battery/charging_enabled ]; then echo 1 > /sys/class/power_supply/battery/charging_enabled; fi; " +
+                    "if [ -w /sys/class/power_supply/battery/input_suspend ]; then echo 0 > /sys/class/power_supply/battery/input_suspend; fi; " +
+                    "if [ -w /sys/class/qcom-battery/charging_enabled ]; then echo 1 > /sys/class/qcom-battery/charging_enabled; fi");
+            }
+        } else if (!enable) {
+            // Ensure no stale dumpsys battery unplug state remains
+            ShellHelper.runCommand(context, "dumpsys battery reset");
         }
 
+        boolean applied = hwOk || sysfsOk;
         SharedPreferences sp = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
-        sp.edit().putBoolean(KEY_BYPASS_ACTIVE, enable).apply();
-        return hwOk || ok;
+        if (!enable || applied) {
+            sp.edit().putBoolean(KEY_BYPASS_ACTIVE, enable && applied).apply();
+        }
+        return applied;
+    }
+
+    /**
+     * Queries live MotoExtendService DPS state (must be called off the main thread).
+     */
+    public static boolean refreshLiveBypassStatus(Context context) {
+        try {
+            String out = ShellHelper.runCommandWithOutput(context, "dumpsys moto_extend_service");
+            if (out != null && out.contains("mCurrentHardwareDpsStatus=")) {
+                boolean active = out.contains("mCurrentHardwareDpsStatus=1");
+                context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE)
+                    .edit().putBoolean(KEY_BYPASS_ACTIVE, active).apply();
+                return active;
+            }
+        } catch (Throwable t) {
+            Log.w(TAG, "refreshLiveBypassStatus failed", t);
+        }
+        return isBypassChargingActive(context);
     }
 
     public static BatteryInfo getBatteryInfo(Context context) {

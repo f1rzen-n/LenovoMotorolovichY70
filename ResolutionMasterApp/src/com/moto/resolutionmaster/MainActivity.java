@@ -44,10 +44,10 @@ public class MainActivity extends Activity {
         };
 
     // DPI Sliders & State
-    private static final String PREFS_NAME = "resolution_master_dpi";
-    private static final String KEY_FHD_DPI = "fhd_dpi";
-    private static final String KEY_QHD_DPI = "qhd_dpi";
-    private static final String KEY_HD_DPI = "hd_dpi";
+    private static final String PREFS_NAME = DisplayManagerHelper.PREFS_DPI;
+    private static final String KEY_FHD_DPI = DisplayManagerHelper.KEY_FHD_DPI;
+    private static final String KEY_QHD_DPI = DisplayManagerHelper.KEY_QHD_DPI;
+    private static final String KEY_HD_DPI = DisplayManagerHelper.KEY_HD_DPI;
 
     private int selectedFhdDpi = 390;
     private int selectedQhdDpi = 520;
@@ -132,22 +132,24 @@ public class MainActivity extends Activity {
             });
         }
 
-        btnShizukuAction.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (ShellHelper.isShizukuRunning()) {
-                    if (!ShellHelper.isShizukuPermissionGranted()) {
-                        ShellHelper.requestShizukuPermission();
-                    } else {
+        if (btnShizukuAction != null) {
+            btnShizukuAction.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (ShellHelper.isShizukuRunning()) {
+                        if (!ShellHelper.isShizukuPermissionGranted()) {
+                            ShellHelper.requestShizukuPermission();
+                        } else {
+                            ShellHelper.openShizuku(MainActivity.this);
+                        }
+                    } else if (ShellHelper.isShizukuInstalled(MainActivity.this)) {
                         ShellHelper.openShizuku(MainActivity.this);
+                    } else {
+                        showDownloadChooserDialog();
                     }
-                } else if (ShellHelper.isShizukuInstalled(MainActivity.this)) {
-                    ShellHelper.openShizuku(MainActivity.this);
-                } else {
-                    showDownloadChooserDialog();
                 }
-            }
-        });
+            });
+        }
 
         // Setup Resolution and DPI controls with SeekBars & chips
         setupDpiControls();
@@ -159,40 +161,50 @@ public class MainActivity extends Activity {
         Button btnFps60 = findViewById(R.id.btn_fps_60);
         Button btnFpsAuto = findViewById(R.id.btn_fps_auto);
 
-        btnFps144.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                applyRefreshRate(DisplayManagerHelper.HZ_144, "144 Гц (Экстрим)");
-            }
-        });
+        if (btnFps144 != null) {
+            btnFps144.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    applyRefreshRate(DisplayManagerHelper.HZ_144, "144 Гц (Экстрим)");
+                }
+            });
+        }
 
-        btnFps120.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                applyRefreshRate(DisplayManagerHelper.HZ_120, "120 Гц (Баланс)");
-            }
-        });
+        if (btnFps120 != null) {
+            btnFps120.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    applyRefreshRate(DisplayManagerHelper.HZ_120, "120 Гц (Баланс)");
+                }
+            });
+        }
 
-        btnFps90.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                applyRefreshRate(DisplayManagerHelper.HZ_90, "90 Гц (Эко-плавно)");
-            }
-        });
+        if (btnFps90 != null) {
+            btnFps90.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    applyRefreshRate(DisplayManagerHelper.HZ_90, "90 Гц (Эко-плавно)");
+                }
+            });
+        }
 
-        btnFps60.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                applyRefreshRate(DisplayManagerHelper.HZ_60, "60 Гц (Энергосбережение)");
-            }
-        });
+        if (btnFps60 != null) {
+            btnFps60.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    applyRefreshRate(DisplayManagerHelper.HZ_60, "60 Гц (Энергосбережение)");
+                }
+            });
+        }
 
-        btnFpsAuto.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                applyRefreshRate(DisplayManagerHelper.HZ_AUTO, "Авто (Динамический)");
-            }
-        });
+        if (btnFpsAuto != null) {
+            btnFpsAuto.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    applyRefreshRate(DisplayManagerHelper.HZ_AUTO, "Авто (Динамический)");
+                }
+            });
+        }
 
         try {
             getContentResolver().registerContentObserver(
@@ -203,8 +215,6 @@ public class MainActivity extends Activity {
                 Settings.Global.getUriFor("display_size_forced"), false, mSettingsObserver);
             getContentResolver().registerContentObserver(
                 Settings.Secure.getUriFor("display_density_forced"), false, mSettingsObserver);
-            getContentResolver().registerContentObserver(
-                Settings.Global.getUriFor(Settings.Global.WINDOW_ANIMATION_SCALE), false, mSettingsObserver);
         } catch (Throwable ignored) {}
 
         try {
@@ -522,18 +532,31 @@ public class MainActivity extends Activity {
             return;
         }
 
-        boolean ok = DisplayManagerHelper.setRefreshRate(this, rate);
-        if (ok) {
-            Toast.makeText(this, getString(R.string.toast_fps_applied, label), Toast.LENGTH_SHORT).show();
-            new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    updateStatusUI();
-                }
-            }, 300);
-        } else {
-            showRefreshRateHelpDialog(rate, label);
-        }
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                final boolean ok = DisplayManagerHelper.setRefreshRate(MainActivity.this, rate);
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (isFinishing() || isDestroyed()) return;
+                        if (ok) {
+                            Toast.makeText(MainActivity.this, getString(R.string.toast_fps_applied, label), Toast.LENGTH_SHORT).show();
+                            new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    if (!isFinishing() && !isDestroyed()) {
+                                        updateStatusUI();
+                                    }
+                                }
+                            }, 300);
+                        } else {
+                            showRefreshRateHelpDialog(rate, label);
+                        }
+                    }
+                });
+            }
+        }).start();
     }
 
     private void showRefreshRateHelpDialog(final float rate, final String modeName) {
@@ -577,13 +600,19 @@ public class MainActivity extends Activity {
         float activeFps = DisplayManagerHelper.getCurrentRefreshRate(this);
         float configuredFps = DisplayManagerHelper.getConfiguredRefreshRate(this);
 
-        tvCurrentRes.setText(String.format("%d × %d", p.x, p.y));
-        tvCurrentDpi.setText(getString(R.string.status_dpi_format, dpi));
+        if (tvCurrentRes != null) {
+            tvCurrentRes.setText(String.format("%d × %d", p.x, p.y));
+        }
+        if (tvCurrentDpi != null) {
+            tvCurrentDpi.setText(getString(R.string.status_dpi_format, dpi));
+        }
 
-        if (configuredFps == DisplayManagerHelper.HZ_AUTO) {
-            tvCurrentFps.setText(getString(R.string.status_fps_format, Math.round(activeFps)) + " (Авто)");
-        } else {
-            tvCurrentFps.setText(getString(R.string.status_fps_format, Math.round(configuredFps)) + " (Фикс.)");
+        if (tvCurrentFps != null) {
+            if (configuredFps == DisplayManagerHelper.HZ_AUTO) {
+                tvCurrentFps.setText(getString(R.string.status_fps_format, Math.round(activeFps)) + " (Авто)");
+            } else {
+                tvCurrentFps.setText(getString(R.string.status_fps_format, Math.round(configuredFps)) + " (Фикс.)");
+            }
         }
 
         boolean hasSecure = checkCallingOrSelfPermission("android.permission.WRITE_SECURE_SETTINGS") == PackageManager.PERMISSION_GRANTED;
@@ -674,48 +703,79 @@ public class MainActivity extends Activity {
     }
 
     private void checkPermission() {
-        if (!ShellHelper.hasWriteSecureSettings(this)) {
-            if (ShellHelper.isShizukuPermissionGranted() || ShellHelper.isRootAvailable()) {
-                boolean ok = ShellHelper.grantWriteSecureSettings(this);
-                if (ok) {
-                    Toast.makeText(this, "Разрешение WRITE_SECURE_SETTINGS выдано автоматически!", Toast.LENGTH_SHORT).show();
-                    updateStatusUI();
-                    return;
-                }
-            }
+        if (ShellHelper.hasWriteSecureSettings(this)) return;
 
-            AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            builder.setTitle(getString(R.string.perm_title));
-            builder.setMessage(getString(R.string.perm_msg));
-
-            if (ShellHelper.isShizukuRunning()) {
-                builder.setPositiveButton("Активировать (Shizuku)", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        if (!ShellHelper.isShizukuPermissionGranted()) {
-                            ShellHelper.requestShizukuPermission();
-                        } else {
-                            boolean ok = ShellHelper.grantWriteSecureSettings(MainActivity.this);
-                            if (ok) {
-                                Toast.makeText(MainActivity.this, "Разрешение успешно выдано! Тайлы шторки активны.", Toast.LENGTH_SHORT).show();
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                if (ShellHelper.isShizukuPermissionGranted() || ShellHelper.isRootAvailable()) {
+                    final boolean ok = ShellHelper.grantWriteSecureSettings(MainActivity.this);
+                    if (ok) {
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                if (isFinishing() || isDestroyed()) return;
+                                Toast.makeText(MainActivity.this, "Разрешение WRITE_SECURE_SETTINGS выдано автоматически!", Toast.LENGTH_SHORT).show();
                                 updateStatusUI();
                             }
-                        }
+                        });
+                        return;
+                    }
+                }
+
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (isFinishing() || isDestroyed() || ShellHelper.hasWriteSecureSettings(MainActivity.this)) return;
+                        showPermissionNeededDialog();
                     }
                 });
             }
+        }).start();
+    }
 
-            builder.setNeutralButton("Скопировать ADB команду", new DialogInterface.OnClickListener() {
+    private void showPermissionNeededDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle(getString(R.string.perm_title));
+        builder.setMessage(getString(R.string.perm_msg));
+
+        if (ShellHelper.isShizukuRunning()) {
+            builder.setPositiveButton("Активировать (Shizuku)", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
-                    ShellHelper.copyToClipboard(MainActivity.this, ShellHelper.ADB_GRANT_COMMAND, "ADB Command");
-                    Toast.makeText(MainActivity.this, getString(R.string.toast_copied), Toast.LENGTH_SHORT).show();
+                    if (!ShellHelper.isShizukuPermissionGranted()) {
+                        ShellHelper.requestShizukuPermission();
+                    } else {
+                        new Thread(new Runnable() {
+                            @Override
+                            public void run() {
+                                final boolean ok = ShellHelper.grantWriteSecureSettings(MainActivity.this);
+                                runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        if (ok && !isFinishing() && !isDestroyed()) {
+                                            Toast.makeText(MainActivity.this, "Разрешение успешно выдано! Тайлы шторки активны.", Toast.LENGTH_SHORT).show();
+                                            updateStatusUI();
+                                        }
+                                    }
+                                });
+                            }
+                        }).start();
+                    }
                 }
             });
-
-            builder.setNegativeButton(getString(R.string.perm_ok), null);
-            builder.show();
         }
+
+        builder.setNeutralButton("Скопировать ADB команду", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                ShellHelper.copyToClipboard(MainActivity.this, ShellHelper.ADB_GRANT_COMMAND, "ADB Command");
+                Toast.makeText(MainActivity.this, getString(R.string.toast_copied), Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        builder.setNegativeButton(getString(R.string.perm_ok), null);
+        builder.show();
     }
 
     @Override

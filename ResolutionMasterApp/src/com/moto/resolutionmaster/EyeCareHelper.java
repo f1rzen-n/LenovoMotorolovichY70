@@ -104,13 +104,6 @@ public class EyeCareHelper {
             int val = Settings.Secure.getInt(context.getContentResolver(), "reduce_bright_colors_level", -1);
             if (val >= 0 && val <= 100) return val;
         } catch (Throwable ignored) {}
-        String out = ShellHelper.runCommandWithOutput(context, "settings get secure reduce_bright_colors_level");
-        if (out != null) {
-            try {
-                int parsed = Integer.parseInt(out.trim());
-                if (parsed >= 0 && parsed <= 100) return parsed;
-            } catch (Throwable ignored) {}
-        }
         return 50;
     }
 

@@ -97,13 +97,15 @@ public class MainMenuActivity extends Activity {
 
         try {
             getContentResolver().registerContentObserver(
-                Settings.Global.getUriFor("oneplus_screen_refresh_rate"), false, mSettingsObserver);
+                Settings.System.getUriFor("peak_refresh_rate"), false, mSettingsObserver);
             getContentResolver().registerContentObserver(
-                Settings.Secure.getUriFor("user_refresh_rate"), false, mSettingsObserver);
+                Settings.System.getUriFor("min_refresh_rate"), false, mSettingsObserver);
+            getContentResolver().registerContentObserver(
+                Settings.Global.getUriFor("display_size_forced"), false, mSettingsObserver);
+            getContentResolver().registerContentObserver(
+                Settings.Secure.getUriFor("display_density_forced"), false, mSettingsObserver);
             getContentResolver().registerContentObserver(
                 Settings.Secure.getUriFor("doze_always_on"), false, mSettingsObserver);
-            getContentResolver().registerContentObserver(
-                Settings.System.getUriFor("pointer_speed"), false, mSettingsObserver);
         } catch (Throwable ignored) {}
     }
 
@@ -291,9 +293,9 @@ public class MainMenuActivity extends Activity {
         float currentFps = DisplayManagerHelper.getCurrentRefreshRate(this);
         float configuredFps = DisplayManagerHelper.getConfiguredRefreshRate(this);
         if (tvMenuFps != null) {
-            String fpsStr = String.format("%.0f Гц", currentFps);
+            String fpsStr = String.format(java.util.Locale.US, "%.0f Гц", currentFps);
             if (configuredFps > 0) {
-                fpsStr += String.format(" (Фикс.)", configuredFps);
+                fpsStr += " (Фикс.)";
             }
             tvMenuFps.setText(fpsStr);
         }
@@ -358,8 +360,8 @@ public class MainMenuActivity extends Activity {
             }
         }
 
-        // 7. Update Top Privilege Button
-        updatePrivilegeButton();
+        // 7. Update Top Privilege Button (fast non-blocking initially, confirmed asynchronously below)
+        updatePrivilegeButton(mLastRootAvailable);
 
         // 8. Update Subtitles in Category List
         if (tvSubDisplay != null) {
@@ -407,14 +409,36 @@ public class MainMenuActivity extends Activity {
             tvSubAudio.setText("Громкость: " + vol + "%" + (safe ? " • Обход лимита ✓" : ""));
         }
 
-        // Check NFC Async
+        // Check Root, Bypass hardware state & NFC Async (never block UI thread with shell/su)
         new Thread(new Runnable() {
             @Override
             public void run() {
+                final boolean isRoot = ShellHelper.isRootAvailable();
+                final boolean liveBypass = PowerHelper.refreshLiveBypassStatus(MainMenuActivity.this);
                 final NfcFixHelper.RoutingInfo nfcInfo = NfcFixHelper.getLiveRoutingInfo(MainMenuActivity.this);
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
+                        if (isFinishing() || isDestroyed()) return;
+                        mLastRootAvailable = isRoot;
+                        updatePrivilegeButton(isRoot);
+
+                        if (tvHudPower != null) {
+                            if (liveBypass) {
+                                tvHudPower.setText("Bypass: Вкл ✓");
+                                tvHudPower.setTextColor(0xFF10B981);
+                            } else {
+                                tvHudPower.setText("Bypass: Выкл");
+                                tvHudPower.setTextColor(0xFF9E9E9E);
+                            }
+                        }
+                        if (tvSubPower != null) {
+                            PowerHelper.BatteryInfo bInfo = PowerHelper.getBatteryInfo(MainMenuActivity.this);
+                            String pText = liveBypass ? "Bypass: ВКЛЮЧЕН ⚡" : ("Батарея: " + bInfo.level + "% • " + String.format("%.1f°C", bInfo.temperature));
+                            tvSubPower.setText(pText);
+                            tvSubPower.setTextColor(liveBypass ? 0xFF8B5CF6 : 0xFF10B981);
+                        }
+
                         if (tvHudNfc != null) {
                             if (nfcInfo.status == NfcFixHelper.NfcStatus.FIXED_100_PERCENT) {
                                 tvHudNfc.setText("NFC: Исправлен ✓");
@@ -434,12 +458,13 @@ public class MainMenuActivity extends Activity {
         }).start();
     }
 
-    private void updatePrivilegeButton() {
+    private volatile boolean mLastRootAvailable = false;
+
+    private void updatePrivilegeButton(boolean isRoot) {
         if (btnHeaderPrivilege == null) return;
 
         boolean isShizukuPerm = ShellHelper.isShizukuPermissionGranted();
         boolean isShizukuRunning = ShellHelper.isShizukuRunning();
-        boolean isRoot = ShellHelper.isRootAvailable();
 
         if (isShizukuPerm) {
             btnHeaderPrivilege.setText("🛡️ Shizuku: Активен ✓");
@@ -460,10 +485,10 @@ public class MainMenuActivity extends Activity {
     }
 
     private void showPrivilegeActionDialog() {
-        boolean isShizukuPerm = ShellHelper.isShizukuPermissionGranted();
-        boolean isShizukuRunning = ShellHelper.isShizukuRunning();
-        boolean isInstalled = ShellHelper.isShizukuInstalled(this);
-        boolean isRoot = ShellHelper.isRootAvailable();
+        final boolean isShizukuPerm = ShellHelper.isShizukuPermissionGranted();
+        final boolean isShizukuRunning = ShellHelper.isShizukuRunning();
+        final boolean isInstalled = ShellHelper.isShizukuInstalled(this);
+        final boolean isRoot = mLastRootAvailable;
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
 

@@ -22,6 +22,12 @@ public class DisplayManagerHelper {
     public static final int NATIVE_HEIGHT = 3168;
     public static final int NATIVE_DENSITY = 520;
 
+    // Shared DPI Preferences (used by both MainActivity and ResolutionTileService)
+    public static final String PREFS_DPI = "resolution_master_dpi";
+    public static final String KEY_FHD_DPI = "fhd_dpi";
+    public static final String KEY_QHD_DPI = "qhd_dpi";
+    public static final String KEY_HD_DPI = "hd_dpi";
+
     public static final int QHD_WIDTH = NATIVE_WIDTH;
     public static final int QHD_HEIGHT = NATIVE_HEIGHT;
     public static final int QHD_DENSITY = NATIVE_DENSITY;

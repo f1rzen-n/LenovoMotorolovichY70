@@ -2,11 +2,11 @@
   <img src="logo.png" width="128" height="128" alt="LenovoMotorolovichY70 Logo">
 </p>
 
-<h1 align="center">LenovoMotorolovichY70 v3.1</h1>
+<h1 align="center">LenovoMotorolovichY70 v3.2</h1>
 
 <p align="center">
   <a href="https://github.com/f1rzen-n"><img src="https://img.shields.io/badge/Author-nik.reneyj%20(@f1rzen--n)-blueviolet.svg" alt="Author"></a>
-  <a href="#"><img src="https://img.shields.io/badge/Version-v3.1-purple.svg" alt="Version"></a>
+  <a href="#"><img src="https://img.shields.io/badge/Version-v3.2-purple.svg" alt="Version"></a>
   <a href="#"><img src="https://img.shields.io/badge/Platform-Android%2012%2B-green.svg" alt="Platform"></a>
   <a href="#"><img src="https://img.shields.io/badge/Device-Lenovo%20Legion%20Y70%20%7C%20Moto%20Edge%2070%20Max-blue.svg" alt="Device"></a>
   <a href="#"><img src="https://img.shields.io/badge/SoC-Snapdragon%208%2B%20Gen%201-orange.svg" alt="SoC"></a>
@@ -83,7 +83,7 @@
 python build_apk.py
 ```
 
-Готовый файл: `LenovoMotorolovichY70_v3.1.apk`.
+Готовый файл: `LenovoMotorolovichY70_v3.2.apk`.
 
 ---
 

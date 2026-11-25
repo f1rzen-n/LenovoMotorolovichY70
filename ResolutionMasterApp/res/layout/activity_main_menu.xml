@@ -45,7 +45,7 @@
                     android:id="@+id/tv_app_version"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Legion Y70 &amp; Moto Edge 70 Max v3.1"
+                    android:text="Legion Y70 &amp; Moto Edge 70 Max v3.2"
                     android:textColor="@color/text_muted"
                     android:textSize="11sp" />
             </LinearLayout>
